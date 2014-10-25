@@ -88,6 +88,8 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Atm.cs" />
+    <Compile Include="Models\WebResponce.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +120,7 @@
     <Content Include="Assets\pin_mkb.svg" />
     <Content Include="Assets\pin_opc.png" />
     <Content Include="Assets\pin_opc.svg" />
+    <Content Include="Assets\rocket.png" />
     <Content Include="Assets\SmallLogo.scale-240.png" />
     <Content Include="Assets\SplashScreen.scale-240.png" />
     <Content Include="Assets\Square71x71Logo.scale-240.png" />

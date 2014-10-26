@@ -12,10 +12,27 @@
     <Grid>
     	<VisualStateManager.VisualStateGroups>
     		<VisualStateGroup x:Name="NotificationStates">
-    			<VisualState x:Name="Closed"/>
+    			<VisualStateGroup.Transitions>
+    				<VisualTransition From="Closed" GeneratedDuration="0:0:0.3" To="Opened">
+    					<VisualTransition.GeneratedEasingFunction>
+    						<CircleEase EasingMode="EaseIn"/>
+    					</VisualTransition.GeneratedEasingFunction>
+    				</VisualTransition>
+    				<VisualTransition From="Opened" GeneratedDuration="0:0:0.3" To="Closed">
+    					<VisualTransition.GeneratedEasingFunction>
+    						<CircleEase EasingMode="EaseIn"/>
+    					</VisualTransition.GeneratedEasingFunction>
+    				</VisualTransition>
+    			</VisualStateGroup.Transitions>
+    			<VisualState x:Name="Closed">
+    				<Storyboard>
+    					<DoubleAnimation Duration="0" To="-170" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="NotificationGrid" d:IsOptimized="True"/>
+    				</Storyboard>
+    			</VisualState>
     			<VisualState x:Name="Opened"/>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -29,15 +46,42 @@
         <Grid x:Name="NotificationGrid"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Top"
-              Background="{ThemeResource PhoneBackgroundBrush}">
+              Background="{ThemeResource PhoneBackgroundBrush}" RenderTransformOrigin="0.5,0.5">
+        	<Grid.RenderTransform>
+        		<CompositeTransform TranslateY="{Binding Height, Converter={StaticResource NegativeConverter}, ElementName=NotificationGrid}"/>
+        	</Grid.RenderTransform>
+			  <Grid.RowDefinitions>
+			  <RowDefinition Height="Auto"/>
+			  <RowDefinition Height="*"/>
+			  <RowDefinition Height="Auto"/>
+			  </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal"
+			Grid.Row="0"
                         Margin="12">
                 <Image Height="25"
                        Source="/Assets/rocket.png"/>
                 <TextBlock Text="Рокетбанк"
                            VerticalAlignment="Center"/>
             </StackPanel>
-            <TextBlock Text="Геолокация отключена, включить?"/>
+            <TextBlock Text="Геолокация отключена, включить?"
+                       FontSize="18"
+			Grid.Row="1"
+			Margin="12"/>
+            <Grid Grid.Row="2"
+                  Margin="12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Не сейчас"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,0,10,0"/>
+                <Button Grid.Column="1"
+                        Content="Ок"
+                        HorizontalAlignment="Stretch"
+                        Margin="10,0,0,0"/>
+            </Grid>
+            
         </Grid>
         <Image Source="/Assets/but_me.png"
                x:Name="MeBtn"

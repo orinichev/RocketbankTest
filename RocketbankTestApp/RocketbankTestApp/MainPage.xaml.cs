@@ -43,21 +43,22 @@ namespace RocketbankTestApp
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+           
         }
 
         private void showAlert()
         {
-
+            VisualStateManager.GoToState(this, "Opened", true);
         }
 
         private void hideAlert()
         {
-
+            VisualStateManager.GoToState(this, "Closed", true);
         }
 
         private void MeBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
+            hideAlert();
         }
 
         private void ZoomInBtn_Tapped(object sender, TappedRoutedEventArgs e)

@@ -5,6 +5,6 @@
     xmlns:local="using:RocketbankTestApp"
     xmlns:views="using:RocketbankTestApp.Views">
     <Application.Resources>
-        <views:NegativeConverter x:Name="NegativeConverter"/>
+        <views:NegativeConverter x:Key="NegativeConverter"/>
     </Application.Resources>
 </Application>

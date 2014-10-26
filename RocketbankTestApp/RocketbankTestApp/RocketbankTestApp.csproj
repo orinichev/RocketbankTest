@@ -91,6 +91,7 @@
     <Compile Include="Models\Atm.cs" />
     <Compile Include="Models\WebResponce.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Converter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

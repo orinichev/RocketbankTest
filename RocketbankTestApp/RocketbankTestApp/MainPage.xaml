@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
     x:Class="RocketbankTestApp.MainPage"
+    FontSize="16"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -34,17 +35,15 @@
     	</VisualStateManager.VisualStateGroups>
         
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
        
-        <!--Map-->
-        <Maps:MapControl HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch"
-                         ZoomLevel="15"                        
-                         x:Name="Map"/>
+        
         <!--Header-->
         <Grid x:Name="NotificationGrid"
+              Grid.Row="0"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Top"
               Background="{ThemeResource PhoneBackgroundBrush}" RenderTransformOrigin="0.5,0.5">
@@ -67,7 +66,19 @@
        
             
         </Grid>
-        <Image Source="/Assets/but_me.png"
+
+        <!--Map-->
+        <Grid HorizontalAlignment="Stretch"
+                Grid.Row="1"
+      VerticalAlignment="Stretch">
+            <Maps:MapControl HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         ZoomLevel="15"      
+                       
+                         x:Name="Map">
+
+            </Maps:MapControl>
+            <Image Source="/Assets/but_me.png"
                x:Name="MeBtn"
                Stretch="Uniform"
                Height="40"
@@ -76,29 +87,71 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Bottom"
                Tapped="MeBtn_Tapped"/>
-        <StackPanel Orientation="Vertical"
+            <StackPanel Orientation="Vertical"
                     Margin="12"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom">
-            <Image Height="40"
+                <Image Height="40"
                    Width="40"
                    Margin="0,0,0,10"
                    x:Name="ZoomInBtn"
                    Source="/Assets/but_zoom_in.png"
                    Tapped="ZoomInBtn_Tapped"/>
-            <Image Height="40"
+                <Image Height="40"
                    Width="40"
                    Margin="0,0,0,10"
                    x:Name="ZoomOutBtn"
                    Source="/Assets/but_zoom_out.png"
                    Tapped="ZoomOutBtn_Tapped"/>
 
-        </StackPanel>
+            </StackPanel>
+        </Grid>
+       
         <!--Additional data-->
         <Grid x:Name="AdditionalData"
 			Background="{ThemeResource PhoneBackgroundBrush}"
 			Grid.Row="1">
-
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical"
+                            Margin="12,12,12,0">
+                    <Grid Margin="0,0,0,6">
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock TextWrapping="Wrap"
+                                   x:Name="ATMName"
+                                   FontSize="28"
+                                   Text="Some test text"/>
+                        <StackPanel x:Name="DestinationPanel"
+                                    Orientation="Horizontal"
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,5,0,0">
+                            <TextBlock Text="3000"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource PhoneMidBrush}"/>
+                            <TextBlock Text="м"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource PhoneMidBrush}"
+                                       />
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock TextWrapping="Wrap"
+                               Text="TestAddress"                              
+                               Margin="0,6"/>
+                    <TextBlock Text="Время работы:"
+                            
+                               FontWeight="Medium"
+                               Margin="0,6"
+                               />
+                    <TextBlock Text="Test time"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
     </Grid>

@@ -64,6 +64,14 @@ namespace RocketbankTestApp
            
         }
 
+        private void fillMap()
+        {
+            if (viewModel != null)
+            {
+
+            }
+        }
+
         private async Task initGeolocation(bool isNew)
         {
             try

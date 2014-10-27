@@ -46,8 +46,10 @@ namespace RocketbankTestApp
         /// This parameter is typically used to configure the page.</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            await initGeolocation(e.NavigationMode == NavigationMode.New);
             if (e.NavigationMode == NavigationMode.New)
             {                
+               
                 await loadAtmData();
                 
             }
@@ -69,14 +71,12 @@ namespace RocketbankTestApp
                 // Get a geolocator object 
                 geolocator = new Geolocator();            
                 var myGeoposition = await geolocator.GetGeopositionAsync();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                
-
+                await goToMe();
+                setUIToLocatedMode();
             }
             catch (Exception)
-            {               
+            {
+                goToMoscow();
                 if (geolocator.LocationStatus == PositionStatus.Disabled)
                 {
                     var notificationDialog = new MessageDialog("Геолокаця отключена, хотите включить?");
@@ -93,13 +93,29 @@ namespace RocketbankTestApp
                         Label = "Да",
                         Invoked = async (c) =>
                         {
-                            await Launcher.LaunchUriAsync(new Uri("ms-settings-proximity:///"));
+                            await Launcher.LaunchUriAsync(new Uri("ms-settings-location:///"));
                         }
                     });
+                    setUIToUnlocatedMode();
+                    if (isNew)
+                    {
+                        notificationDialog.ShowAsync();
+                    }                    
                 }
-
             }
         }
+
+        private void setUIToUnlocatedMode()
+        {
+            MeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //goToBtn
+        }
+
+        private void setUIToLocatedMode()
+        {
+            MeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+               
 
         private async Task goToMe()
         {
@@ -111,12 +127,25 @@ namespace RocketbankTestApp
                      Latitude = meGeoPoint.Coordinate.Latitude,
                      Longitude = meGeoPoint.Coordinate.Longitude,
                  };
+                 Map.ZoomLevel = 15;
                  Map.Center = new Geopoint(geoPosition);
             }    
             catch
             {
 
             }
+        }
+
+        private async Task goToMoscow()
+        {
+            BasicGeoposition geoPosition = new BasicGeoposition()
+            {
+
+                Latitude = 55.7431,
+                Longitude = 37.6129,
+            };
+            Map.ZoomLevel = 11;
+            Map.Center = new Geopoint(geoPosition);
         }
 
         private async System.Threading.Tasks.Task loadAtmData()
@@ -140,29 +169,25 @@ namespace RocketbankTestApp
             }
         }
 
-        private void showAlert()
+        private async void MeBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, "Opened", true);
-        }
-
-        private void hideAlert()
-        {
-            VisualStateManager.GoToState(this, "Closed", true);
-        }
-
-        private void MeBtn_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            hideAlert();
+            await goToMe();
         }
 
         private void ZoomInBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
+            if (Map.ZoomLevel!=20)
+            {
+                Map.ZoomLevel++;
+            }
         }
 
         private void ZoomOutBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
+            if (Map.ZoomLevel!=1)
+            {
+                Map.ZoomLevel--;
+            }
         }
     }
 }

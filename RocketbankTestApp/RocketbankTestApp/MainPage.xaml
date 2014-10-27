@@ -41,6 +41,7 @@
         <!--Map-->
         <Maps:MapControl HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
+                         ZoomLevel="15"                        
                          x:Name="Map"/>
         <!--Header-->
         <Grid x:Name="NotificationGrid"

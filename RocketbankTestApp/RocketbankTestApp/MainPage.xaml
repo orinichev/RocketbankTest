@@ -12,22 +12,20 @@
 
     <Grid>
     	<VisualStateManager.VisualStateGroups>
-    		<VisualStateGroup x:Name="NotificationStates">
+    		<VisualStateGroup x:Name="DetailedInfoStates">
     			<VisualStateGroup.Transitions>
-    				<VisualTransition From="Closed" GeneratedDuration="0:0:0.3" To="Opened">
-    					<VisualTransition.GeneratedEasingFunction>
-    						<CircleEase EasingMode="EaseIn"/>
-    					</VisualTransition.GeneratedEasingFunction>
-    				</VisualTransition>
-    				<VisualTransition From="Opened" GeneratedDuration="0:0:0.3" To="Closed">
-    					<VisualTransition.GeneratedEasingFunction>
-    						<CircleEase EasingMode="EaseIn"/>
-    					</VisualTransition.GeneratedEasingFunction>
-    				</VisualTransition>
+    				<VisualTransition From="Closed" GeneratedDuration="0:5:0" To="Opened"/>
+    				<VisualTransition From="Opened" GeneratedDuration="0:5:0" To="Closed"/>
     			</VisualStateGroup.Transitions>
     			<VisualState x:Name="Closed">
     				<Storyboard>
-    					<DoubleAnimation Duration="0" To="-170" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="NotificationGrid" d:IsOptimized="True"/>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<x:Double>0</x:Double>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
     				</Storyboard>
     			</VisualState>
     			<VisualState x:Name="Opened"/>
@@ -75,9 +73,7 @@
                          VerticalAlignment="Stretch"
                          ZoomLevel="15"      
                        
-                         x:Name="Map">
-
-            </Maps:MapControl>
+                         x:Name="Map"/>
             <Image Source="/Assets/but_me.png"
                x:Name="MeBtn"
                Stretch="Uniform"

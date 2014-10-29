@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace RocketbankTestApp.DataAccess
 {
-    public class BancomatDataSource
+    public class AtmDataSource
     {
         #region Nested classes
         private DateTime FromUTS(int timeStemp)

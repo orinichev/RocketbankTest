@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 
 namespace RocketbankTestApp.Models
 {
+   
+
     public class Atm
     {
+        public const string ORS = "ors";
+        public const string MKB = "mkb";
+        public const string IC = "intercommerz_office";
+        public const string ICB = "intercommerz_atm";
+
         public int Id { get; set; }
 
 
@@ -39,5 +47,17 @@ namespace RocketbankTestApp.Models
 
 
         public string Type { get; set; }
+
+        public Geopoint Location
+        {
+            get
+            {
+                return new Geopoint(new BasicGeoposition()
+                    {
+                        Longitude = Lon,
+                        Latitude = Lat
+                    });
+            }
+        }
     }
 }

@@ -14,66 +14,73 @@
     <Page.Resources>
         <vm:MainVM x:Key="MainVM"/>
     </Page.Resources>
-    
-    
+
+
     <Grid VerticalAlignment="Stretch">
-    	<VisualStateManager.VisualStateGroups>
-    		<VisualStateGroup x:Name="DetailedInfoStates">
-    			<VisualStateGroup.Transitions>
-    				<VisualTransition From="Closed" GeneratedDuration="0" To="Opened">
-    					<VisualTransition.GeneratedEasingFunction>
-    						<CircleEase EasingMode="EaseIn"/>
-    					</VisualTransition.GeneratedEasingFunction>
-    					<Storyboard>
-    						<DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
-    							<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="500"/>
-    						</DoubleAnimationUsingKeyFrames>
-    					</Storyboard>
-    				</VisualTransition>
-    				<VisualTransition From="Opened" GeneratedDuration="0" To="Closed">
-    					<VisualTransition.GeneratedEasingFunction>
-    						<CircleEase EasingMode="EaseIn"/>
-    					</VisualTransition.GeneratedEasingFunction>
-    					<Storyboard>
-    						<DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
-    							<EasingDoubleKeyFrame KeyTime="0" Value="500"/>
-    							<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
-    						</DoubleAnimationUsingKeyFrames>
-    					</Storyboard>
-    				</VisualTransition>
-    			</VisualStateGroup.Transitions>
-    			<VisualState x:Name="Closed">
-    				<Storyboard>
-    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
-    						<DiscreteObjectKeyFrame KeyTime="0">
-    							<DiscreteObjectKeyFrame.Value>
-    								<x:Double>0</x:Double>
-    							</DiscreteObjectKeyFrame.Value>
-    						</DiscreteObjectKeyFrame>
-    					</ObjectAnimationUsingKeyFrames>
-    				</Storyboard>
-    			</VisualState>
-    			<VisualState x:Name="Opened">
-    				<Storyboard>
-    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
-    						<DiscreteObjectKeyFrame KeyTime="0">
-    							<DiscreteObjectKeyFrame.Value>
-    								<x:Double>500</x:Double>
-    							</DiscreteObjectKeyFrame.Value>
-    						</DiscreteObjectKeyFrame>
-    					</ObjectAnimationUsingKeyFrames>
-    				</Storyboard>
-    			</VisualState>
-    		</VisualStateGroup>
-    	</VisualStateManager.VisualStateGroups>
-        
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DetailedInfoStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="Closed" GeneratedDuration="0" To="Opened">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn"/>
+                        </VisualTransition.GeneratedEasingFunction>
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="350"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition From="Opened" GeneratedDuration="0" To="Closed">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn"/>
+                        </VisualTransition.GeneratedEasingFunction>
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="350"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Closed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Double>0</x:Double>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
+                        	<DiscreteObjectKeyFrame KeyTime="0">
+                        		<DiscreteObjectKeyFrame.Value>
+                        			<x:Double>0</x:Double>
+                        		</DiscreteObjectKeyFrame.Value>
+                        	</DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Opened">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Double>350</x:Double>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-       
-        
-       
+
+
+
 
         <!--Map-->
         <Grid HorizontalAlignment="Stretch"
@@ -85,13 +92,13 @@
                         
                              Maps:MapControl.NormalizedAnchorPoint="0.5,0.5"
                          x:Name="Map">
-               
+
                 <Maps:MapItemsControl
                     ItemsSource="{Binding AtmData}"
 
                     >
-                   
-                  
+
+
                     <Maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Image
@@ -106,8 +113,8 @@
 
                         </DataTemplate>
                     </Maps:MapItemsControl.ItemTemplate>
-                
-                  
+
+
                 </Maps:MapItemsControl>
             </Maps:MapControl>
             <Image Source="/Assets/but_me.png"
@@ -138,18 +145,24 @@
 
             </StackPanel>
         </Grid>
-       
+
         <!--Additional data-->
         <Grid x:Name="AdditionalData"
 			Background="{ThemeResource PhoneBackgroundBrush}"
-			Grid.Row="1" Height="0">
-            <ScrollViewer>
+              VerticalAlignment="Bottom"
+               
+              MaxHeight="450"
+              MinHeight="0"
+        Height="Auto"
+			Grid.Row="1">
+            <ScrollViewer x:Name="DataScroller"
+                           >
                 <StackPanel Orientation="Vertical"
                             Margin="12,12,12,0">
                     <Grid Margin="0,0,0,6">
-                        
+
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="4.5*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -178,27 +191,104 @@
                     <TextBlock TextWrapping="Wrap"
                                Text="{Binding Address}"                              
                                Margin="0,7"/>
-                    <TextBlock Text="Время работы:"
-                            
+                    <Grid>
+                        <Image x:Name="IcImage"
+                               Source="/Assets/info_icb.png"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Height="Auto"
+                               Visibility="Collapsed"/>
+                        <StackPanel>
+                            <TextBlock Text="Время работы:"
+                             HorizontalAlignment="Left"
                                FontWeight="Bold"
                                Margin="0,7"
                                />
-                    <TextBlock Text="{Binding Hours}"
-                               TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Hours}"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="200"
+                                       HorizontalAlignment="Left"/>
+
+                            <TextBlock Text="С паспортом и картой можно пополнить в кассе"
+                                       x:Name="IcText"
+                                       FontSize="16"
+                                       Margin="0,24,0,0"
+                                       MaxWidth="200"
+                                       TextWrapping="Wrap"
+                                       Visibility="Collapsed"
+                                       HorizontalAlignment="Left" LineHeight="24"
+                                       />
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel x:Name="RocketPanel" Visibility="Collapsed">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock"
+                                   x:Key="HeaderStyle">
+                                <Setter Property="FontSize" Value="26"/>
+                                <Setter Property="Margin" Value="0,24,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock
+                            Style="{StaticResource HeaderStyle}"
+                               Text="как пополнить счет?"
+                               />
+                        <TextBlock Text="Найдите и нажмите кнопку &quot;Рокетбанк&quot; на экране терминала"
+                               TextWrapping="Wrap"
+                                   HorizontalAlignment="Left"
+                               MaxWidth="300"
+                                   Margin="0,12"/>
+                        <Image Source="/Assets/info_mkb_1.png"
+                               Margin="-12,0"/>
+                        <TextBlock Text="Вставьте карту Рокетбанка в терминал и введите пинкод. Теперь можно пополнять счет. Лимиты пополнения расположены ниже"
+                                   
+                               TextWrapping="Wrap"
+                                   HorizontalAlignment="Left"
+                               MaxWidth="300"
+                                   Margin="0,12"/>
+                        <Image Source="/Assets/info_mkb_2.png"
+                               Margin="-12,0"/>
+                        <TextBlock Style="{StaticResource HeaderStyle}"
+                                   Text="лимиты пополнения:"/>
+                        <TextBlock Text="15 000 р. за операцию"
+                                   Margin="0,12,0,0"/>
+                        <TextBlock Text="50 000 р. в день"/>
+                        <TextBlock Text="8 операций в день"/>
+                        <TextBlock Text="До 100 000 р. за 4 дня"/>
+                        <TextBlock Text="480 000 р. в месяц"/>
+                    </StackPanel>
+                    <Grid x:Name="ORCPanel">
+                        <Image Source="/Assets/info_opc.png"/>
+                        <TextBlock Text="Ищите банкомат с логотипом сети ОРС"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Margin="0,5,0,0"
+                                       MaxWidth="125"
+                       TextWrapping="Wrap" LineHeight="24"/>
+                    </Grid>
+                    <Image x:Name="ICBImage"
+                           HorizontalAlignment="Stretch"
+                           Source="/Assets/info_ic.png"
+                       />
                 </StackPanel>
+              
             </ScrollViewer>
         </Grid>
 
-        
+
         <!--Progress bar-->
         <StackPanel Orientation="Vertical"   VerticalAlignment="Top"
                     x:Name="ProgressPanel">
             <ProgressBar HorizontalAlignment="Stretch"
                          IsIndeterminate="True"/>
             <TextBlock Text="Загружаем данные о банкоматах"
+                       
                        FontSize="12"
-                       Margin="12,5,0,0"/>
+                       Margin="12,5,0,0"
+                   
+                       />
+           
+            
         </StackPanel>
-       
+
     </Grid>
 </Page>

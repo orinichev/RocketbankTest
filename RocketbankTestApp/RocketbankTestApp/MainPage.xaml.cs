@@ -57,6 +57,8 @@ namespace RocketbankTestApp
 
         void createMePin()
         {
+            
+            
             MePin = new Image();
             MePin.Source = new BitmapImage(new Uri("ms-appx:///Assets/pin_me.png"));
             Binding locationBinding = new Binding();
@@ -118,12 +120,38 @@ namespace RocketbankTestApp
                 DistanceBlock.Text = getDistance(distance).ToString();
                 DistanceMeterBlock.Text = getMeasure(distance).ToString() ;
             }
+            
+            if (atm.Type == Models.Atm.IC)
+            {
+                DataScroller.VerticalScrollMode = ScrollMode.Disabled;
+                IcImage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                IcText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            if (atm.Type == Models.Atm.MKB)
+            {
+                RocketPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            if (atm.Type == Models.Atm.ORS)
+            {
+                ORCPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            if (atm.Type == Models.Atm.ICB)
+            {
+                ICBImage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
         }
 
         private void closeAdditionalInfo()
         {
+            
             VisualStateManager.GoToState(this, "Closed", true);
             isAdditionalInfoOpened = false;
+            IcImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            IcText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            RocketPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            DataScroller.VerticalScrollMode = ScrollMode.Enabled;
+            ORCPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ICBImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         /// <summary>
@@ -132,7 +160,8 @@ namespace RocketbankTestApp
         /// <param name="e">Event data that describes how this page was reached.
         /// This parameter is typically used to configure the page.</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e)
-        {       
+        {
+            closeAdditionalInfo();
             if (e.NavigationMode == NavigationMode.New)
             {
 
@@ -155,6 +184,7 @@ namespace RocketbankTestApp
             }
             viewModel.GeolocationStateChanged += viewModel_GeolocationStateChanged;
             ProgressPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        
             // TODO: Prepare page for display here.
             
             // TODO: If your application contains multiple pages, ensure that you are
@@ -276,13 +306,14 @@ namespace RocketbankTestApp
         private void ATM_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var context = (sender as FrameworkElement).DataContext as Models.Atm;
-            Map.Center = context.Location;
+            Map.Center = context.Position;
             AdditionalData.DataContext = context;
             openAdditionalInfo(context);
             e.Handled = true;
         }
 
-        private void Map_Tapped(object sender, TappedRoutedEventArgs e)
+
+        private void Map_MapTapped(MapControl sender, MapInputEventArgs args)
         {
             closeAdditionalInfo();
         }

@@ -38,9 +38,9 @@ namespace RocketbankTestApp.ViewModels
             }
         }
 
-        private ObservableCollection<Models.Atm> atmData;
+        private ObservableCollection<Models.IGeoItem> atmData;
 
-        public ObservableCollection<Models.Atm> AtmData
+        public ObservableCollection<Models.IGeoItem> AtmData
         {
             get { return atmData; }
             set { atmData = value;
@@ -79,8 +79,8 @@ namespace RocketbankTestApp.ViewModels
                const double earthRadius = 6371; // kilometers
 
                // convert latitude and longitude values to radians
-               var prevRadLat = atm.Location.Position.Latitude * degreesToRadians;
-               var prevRadLong = atm.Location.Position.Longitude * degreesToRadians;
+               var prevRadLat = atm.Position.Position.Latitude * degreesToRadians;
+               var prevRadLong = atm.Position.Position.Longitude * degreesToRadians;
                var currRadLat = myLocation.Position.Latitude * degreesToRadians;
                var currRadLong = myLocation.Position.Longitude * degreesToRadians;
 
@@ -122,7 +122,7 @@ namespace RocketbankTestApp.ViewModels
                                  select a.Type;
 
 
-                AtmData = new ObservableCollection<Models.Atm>(atmData);
+                AtmData = new ObservableCollection<Models.IGeoItem>(atmData);
             }
             catch (Exception ex)
             {

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 
 namespace RocketbankTestApp.Models
 {
-    public class WebResponce
+    public interface IGeoItem
     {
-        public int LastUpdate { get; set; }
-
-    
-        public HashSet<Atm> Atms { get; set; }
+        Geopoint Position { get; set; }
     }
 }

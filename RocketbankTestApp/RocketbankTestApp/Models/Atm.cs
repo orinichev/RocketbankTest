@@ -9,7 +9,7 @@ namespace RocketbankTestApp.Models
 {
    
 
-    public class Atm
+    public class Atm: IGeoItem
     {
         public const string ORS = "ors";
         public const string MKB = "mkb";
@@ -48,7 +48,7 @@ namespace RocketbankTestApp.Models
 
         public string Type { get; set; }
 
-        public Geopoint Location
+        public Geopoint Position
         {
             get
             {
@@ -57,6 +57,10 @@ namespace RocketbankTestApp.Models
                         Longitude = Lon,
                         Latitude = Lat
                     });
+            }
+            set
+            {
+
             }
         }
     }

@@ -5,17 +5,42 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:vm="using:RocketbankTestApp.ViewModels"
+    xmlns:geo="using:Windows.Devices.Geolocation"
     x:Class="RocketbankTestApp.MainPage"
     FontSize="16"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid>
+    <Page.Resources>
+        <vm:MainVM x:Key="MainVM"/>
+    </Page.Resources>
+    
+    
+    <Grid VerticalAlignment="Stretch">
     	<VisualStateManager.VisualStateGroups>
     		<VisualStateGroup x:Name="DetailedInfoStates">
     			<VisualStateGroup.Transitions>
-    				<VisualTransition From="Closed" GeneratedDuration="0:5:0" To="Opened"/>
-    				<VisualTransition From="Opened" GeneratedDuration="0:5:0" To="Closed"/>
+    				<VisualTransition From="Closed" GeneratedDuration="0" To="Opened">
+    					<VisualTransition.GeneratedEasingFunction>
+    						<CircleEase EasingMode="EaseIn"/>
+    					</VisualTransition.GeneratedEasingFunction>
+    					<Storyboard>
+    						<DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
+    							<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="500"/>
+    						</DoubleAnimationUsingKeyFrames>
+    					</Storyboard>
+    				</VisualTransition>
+    				<VisualTransition From="Opened" GeneratedDuration="0" To="Closed">
+    					<VisualTransition.GeneratedEasingFunction>
+    						<CircleEase EasingMode="EaseIn"/>
+    					</VisualTransition.GeneratedEasingFunction>
+    					<Storyboard>
+    						<DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
+    							<EasingDoubleKeyFrame KeyTime="0" Value="500"/>
+    							<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+    						</DoubleAnimationUsingKeyFrames>
+    					</Storyboard>
+    				</VisualTransition>
     			</VisualStateGroup.Transitions>
     			<VisualState x:Name="Closed">
     				<Storyboard>
@@ -28,52 +53,62 @@
     					</ObjectAnimationUsingKeyFrames>
     				</Storyboard>
     			</VisualState>
-    			<VisualState x:Name="Opened"/>
+    			<VisualState x:Name="Opened">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<x:Double>500</x:Double>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
        
         
-        <!--Header-->
-        <Grid x:Name="NotificationGrid"
-              Grid.Row="0"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Top"
-              Background="{ThemeResource PhoneBackgroundBrush}" RenderTransformOrigin="0.5,0.5">
-        	<Grid.RenderTransform>
-        		<CompositeTransform TranslateY="{Binding Height, Converter={StaticResource NegativeConverter}, ElementName=NotificationGrid}"/>
-        	</Grid.RenderTransform>
-			  <Grid.RowDefinitions>
-			  <RowDefinition Height="Auto"/>
-			  <RowDefinition Height="*"/>
-			  <RowDefinition Height="Auto"/>
-			  </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal"
-			Grid.Row="0"
-                        Margin="12">
-                <Image Height="25"
-                       Source="/Assets/rocket.png"/>
-                <TextBlock Text="Рокетбанк"
-                           VerticalAlignment="Center"/>
-            </StackPanel>
        
-            
-        </Grid>
 
         <!--Map-->
         <Grid HorizontalAlignment="Stretch"
-                Grid.Row="1"
-      VerticalAlignment="Stretch">
+                Grid.Row="0"
+              DataContext="{StaticResource MainVM}">
             <Maps:MapControl HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch"
                          ZoomLevel="15"      
-                       
-                         x:Name="Map"/>
+                       Tapped="Map_Tapped"
+                             Maps:MapControl.NormalizedAnchorPoint="0.5,0.5"
+                         x:Name="Map">
+               
+                <Maps:MapItemsControl
+                    ItemsSource="{Binding AtmData}"
+
+                    >
+                   
+                  
+                    <Maps:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                
+                                Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
+                           Maps:MapControl.Location="{Binding Location}"
+                                   Maps:MapControl.NormalizedAnchorPoint="1,0"
+                                   Height="48"
+                                   Width="64"
+                                   Tapped="ATM_Tapped"
+                           />
+
+                        </DataTemplate>
+                    </Maps:MapItemsControl.ItemTemplate>
+                
+                  
+                </Maps:MapItemsControl>
+            </Maps:MapControl>
             <Image Source="/Assets/but_me.png"
                x:Name="MeBtn"
                Stretch="Uniform"
@@ -106,7 +141,7 @@
         <!--Additional data-->
         <Grid x:Name="AdditionalData"
 			Background="{ThemeResource PhoneBackgroundBrush}"
-			Grid.Row="1">
+			Grid.Row="1" Height="0">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical"
                             Margin="12,12,12,0">
@@ -120,7 +155,7 @@
                         <TextBlock TextWrapping="Wrap"
                                    x:Name="ATMName"
                                    FontSize="28"
-                                   Text="Some test text"/>
+                                   Text="{Binding Name}"/>
                         <StackPanel x:Name="DestinationPanel"
                                     Orientation="Horizontal"
                                     Grid.Column="2"
@@ -128,27 +163,41 @@
                                     VerticalAlignment="Top"
                                     Margin="0,5,0,0">
                             <TextBlock Text="3000"
-                                       FontSize="14"
+                                       FontSize="18"
+                                       x:Name="DistanceBlock"
                                        Foreground="{ThemeResource PhoneMidBrush}"/>
                             <TextBlock Text="м"
-                                       FontSize="14"
+                                       FontSize="18"
+                                       Margin="4,0,0,0"
+                                       x:Name="DistanceMeterBlock"
                                        Foreground="{ThemeResource PhoneMidBrush}"
                                        />
                         </StackPanel>
                     </Grid>
                     <TextBlock TextWrapping="Wrap"
-                               Text="TestAddress"                              
+                               Text="{Binding Address}"                              
                                Margin="0,6"/>
                     <TextBlock Text="Время работы:"
                             
                                FontWeight="Medium"
                                Margin="0,6"
                                />
-                    <TextBlock Text="Test time"
+                    <TextBlock Text="{Binding Hours}"
                                TextWrapping="Wrap"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
+        
+        <!--Progress bar-->
+        <StackPanel Orientation="Vertical"   VerticalAlignment="Top"
+                    x:Name="ProgressPanel">
+            <ProgressBar HorizontalAlignment="Stretch"
+                         IsIndeterminate="True"/>
+            <TextBlock Text="Загружаем данные о банкоматах"
+                       FontSize="12"
+                       Margin="12,5,0,0"/>
+        </StackPanel>
+       
     </Grid>
 </Page>

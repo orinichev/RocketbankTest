@@ -57,6 +57,8 @@ namespace RocketbankTestApp
 
         void createMePin()
         {
+            
+            
             MePin = new Image();
             MePin.Source = new BitmapImage(new Uri("ms-appx:///Assets/pin_me.png"));
             Binding locationBinding = new Binding();
@@ -282,7 +284,8 @@ namespace RocketbankTestApp
             e.Handled = true;
         }
 
-        private void Map_Tapped(object sender, TappedRoutedEventArgs e)
+
+        private void Map_MapTapped(MapControl sender, MapInputEventArgs args)
         {
             closeAdditionalInfo();
         }

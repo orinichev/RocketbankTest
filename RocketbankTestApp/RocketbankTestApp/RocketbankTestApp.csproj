@@ -103,6 +103,8 @@
     <Compile Include="ViewModels\BaseVM.cs" />
     <Compile Include="ViewModels\MainVM.cs" />
     <Compile Include="Views\Converter.cs" />
+    <Compile Include="Views\DepencencyObject.cs" />
+    <Compile Include="Views\MapViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

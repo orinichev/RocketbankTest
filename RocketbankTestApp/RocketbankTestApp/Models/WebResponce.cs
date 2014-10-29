@@ -11,6 +11,6 @@ namespace RocketbankTestApp.Models
         public int LastUpdate { get; set; }
 
     
-        public List<Atm> Atms { get; set; }
+        public HashSet<Atm> Atms { get; set; }
     }
 }

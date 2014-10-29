@@ -80,8 +80,9 @@
                 Grid.Row="0"
               DataContext="{StaticResource MainVM}">
             <Maps:MapControl HorizontalAlignment="Stretch"
-                         ZoomLevel="15"      
-                       Tapped="Map_Tapped"
+                             ZoomLevel="15"
+                             MapTapped="Map_MapTapped"
+                        
                              Maps:MapControl.NormalizedAnchorPoint="0.5,0.5"
                          x:Name="Map">
                
@@ -98,8 +99,8 @@
                                 Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
                            Maps:MapControl.Location="{Binding Location}"
                                    Maps:MapControl.NormalizedAnchorPoint="1,0"
-                                   Height="48"
-                                   Width="64"
+                                   Height="64"
+                                   Width="48"
                                    Tapped="ATM_Tapped"
                            />
 
@@ -154,14 +155,14 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock TextWrapping="Wrap"
                                    x:Name="ATMName"
-                                   FontSize="28"
+                                   FontSize="26"
                                    Text="{Binding Name}"/>
                         <StackPanel x:Name="DestinationPanel"
                                     Orientation="Horizontal"
                                     Grid.Column="2"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Margin="0,5,0,0">
+                                    Margin="0,6,0,0">
                             <TextBlock Text="3000"
                                        FontSize="18"
                                        x:Name="DistanceBlock"
@@ -176,11 +177,11 @@
                     </Grid>
                     <TextBlock TextWrapping="Wrap"
                                Text="{Binding Address}"                              
-                               Margin="0,6"/>
+                               Margin="0,7"/>
                     <TextBlock Text="Время работы:"
                             
-                               FontWeight="Medium"
-                               Margin="0,6"
+                               FontWeight="Bold"
+                               Margin="0,7"
                                />
                     <TextBlock Text="{Binding Hours}"
                                TextWrapping="Wrap"/>

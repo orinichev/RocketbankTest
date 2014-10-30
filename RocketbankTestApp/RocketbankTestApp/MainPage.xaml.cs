@@ -210,6 +210,7 @@ namespace RocketbankTestApp
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             closeAdditionalInfo();
+            viewModel.GeolocationStateChanged += viewModel_GeolocationStateChanged;
             if (e.NavigationMode == NavigationMode.New)
             {
                 await viewModel.LoadAtmData();
@@ -227,8 +228,7 @@ namespace RocketbankTestApp
                     setUIToUnlocatedMode();
                     await showNavigationAlert();
                 }
-            }
-            viewModel.GeolocationStateChanged += viewModel_GeolocationStateChanged;
+            }            
             ProgressPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;       
         }
 

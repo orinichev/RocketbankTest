@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.UI.Popups;
+using RocketbankTestApp.Models;
+using Windows.ApplicationModel.Core;
 
 namespace RocketbankTestApp.ViewModels
 {
-    public class MainVM: BaseVM
+    public class MainVM : BaseVM
     {
         public event EventHandler<bool> GeolocationStateChanged;
 
@@ -18,8 +20,10 @@ namespace RocketbankTestApp.ViewModels
         public bool IsGeolocationEnabled
         {
             get { return isGeolocationEnabled; }
-            set { isGeolocationEnabled = value;
-            riseGeolocationChanged(isGeolocationEnabled);
+            set
+            {
+                isGeolocationEnabled = value;
+                riseGeolocationChanged(isGeolocationEnabled);
             }
         }
 
@@ -43,17 +47,22 @@ namespace RocketbankTestApp.ViewModels
         public ObservableCollection<Models.IGeoItem> AtmData
         {
             get { return atmData; }
-            set { atmData = value;
-            risePropertyChanged();
+            set
+            {
+                atmData = value;
+                risePropertyChanged();
             }
         }
 
         public async Task initGeolocation()
         {
-             try
+            try
             {
                 // Get a geolocator object 
                 geolocator = new Geolocator();
+                geolocator.MovementThreshold = 5;
+                geolocator.StatusChanged += geolocator_StatusChanged;
+                geolocator.PositionChanged += geolocator_PositionChanged;
                 var meGeoPoint = await geolocator.GetGeopositionAsync();
                 BasicGeoposition geoPosition = new BasicGeoposition()
                 {
@@ -64,16 +73,39 @@ namespace RocketbankTestApp.ViewModels
                 IsGeolocationEnabled = true;
             }
             catch
-             {
-                 IsGeolocationEnabled = false;
-             }
+            {
+                IsGeolocationEnabled = false;
+            }
         }
 
-       public int GetDistanceTo(Models.Atm atm)
-       {
-           return isGeolocationEnabled ? 10:0;           
-       }
-        
+        async void geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    MyLocation = new Geopoint(new BasicGeoposition()
+                        {
+                            Latitude = args.Position.Coordinate.Latitude,
+                            Longitude = args.Position.Coordinate.Longitude,
+                        });
+                });
+
+
+        }
+
+        async void geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync( Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    IsGeolocationEnabled = args.Status == PositionStatus.Ready;
+                });
+         
+        }
+
+        public int GetDistanceTo(Models.Atm atm)
+        {
+            return isGeolocationEnabled ? (int)atm.Position.GetDistance(MyLocation) : 0;
+        }
+
         public async Task LoadAtmData()
         {
             DataAccess.AtmDataSource atmDataSource = new DataAccess.AtmDataSource();

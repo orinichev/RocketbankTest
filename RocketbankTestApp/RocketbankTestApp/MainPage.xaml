@@ -129,11 +129,11 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Margin="0,6,0,0">
-                            <TextBlock Text="3000"
+                            <TextBlock 
                                        FontSize="18"
                                        x:Name="DistanceBlock"
                                        Foreground="{ThemeResource PhoneMidBrush}"/>
-                            <TextBlock Text="м"
+                            <TextBlock 
                                        FontSize="18"
                                        Margin="4,0,0,0"
                                        x:Name="DistanceMeterBlock"

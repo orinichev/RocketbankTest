@@ -14,7 +14,12 @@ namespace RocketbankTestApp.Views
 {
     public class MapCollectionView : DependencyObject, IList, INotifyCollectionChanged
     {
+        VirtualGeoGraph pointGraph;
         private IList<IGeoItem> forView = new List<IGeoItem>();
+
+        int waitCounter = 0;
+        const int Delay = 30;
+        bool running = false;
 
 
         public static readonly DependencyProperty CollectionSourceProperty = DependencyProperty.Register
@@ -26,6 +31,7 @@ namespace RocketbankTestApp.Views
                     MapCollectionView _this = d as MapCollectionView;
                     if (_this != null)
                     {
+                        _this.generateGraph(e.NewValue as IList<IGeoItem>);
                         if (_this.MapControl!=null)
                             _this.addNew();
                     }
@@ -80,9 +86,15 @@ namespace RocketbankTestApp.Views
             }
         }
 
-        int waitCounter = 0;
-        int Delay = 50;
-        bool running = false;
+      
+
+        private void generateGraph(IList<IGeoItem> sourcePoints)
+        {
+            System.Diagnostics.Debug.WriteLine("start graph generation");
+            pointGraph = new VirtualGeoGraph(sourcePoints);
+            System.Diagnostics.Debug.WriteLine("Graph generated for " + sourcePoints.Count.ToString() + " points");
+        }
+
 
         async void mapControl_Changed(MapControl sender, object args)
         {
@@ -126,14 +138,70 @@ namespace RocketbankTestApp.Views
         private void addNew()
         {
             if (CollectionSource == null) return;
-            var toAdd = CollectionSource.Except(forView);
-            var rect = getVisibleRect(); 
-            foreach (var point in toAdd)
+
+            var rect = getVisibleRect();
+            IGeoItem first = null;
+            if (forView.Count != 0)
             {
-                if (canBeViewed(point.Position, rect))
+                first = forView[0];
+            }
+            else
+            {
+                foreach (var point in CollectionSource)
                 {
-                    forView.Add(point);
-                    riseCollectionChanged(NotifyCollectionChangedAction.Add, point, forView.Count-1);
+                    if (canBeViewed(point.Position, rect))
+                    {
+                        first = point;
+                        break;
+                    }
+                }
+                if (first != null)
+                {
+                    forView.Add(first);
+                    riseCollectionChanged(NotifyCollectionChangedAction.Add, first, forView.Count - 1);
+                }
+            }
+
+            if (first != null)
+            {
+                var p1 = rect.NorthwestCorner;
+                var p2 = rect.SoutheastCorner;
+                var p3 = new BasicGeoposition()
+                {
+                    Latitude = rect.SoutheastCorner.Latitude,
+                    Longitude = rect.NorthwestCorner.Longitude
+                };
+                var p4 = new BasicGeoposition()
+                {
+                    Latitude = rect.NorthwestCorner.Latitude,
+                    Longitude = rect.SoutheastCorner.Longitude
+                };
+                double maxDistance = Math.Max
+                    (Math.Max(first.Position.GetDistance(new Geopoint(p1)), first.Position.GetDistance(new Geopoint(p2)))
+                    , Math.Max(first.Position.GetDistance(new Geopoint(p3)), first.Position.GetDistance(new Geopoint(p4))));
+
+                var candidates = pointGraph.GetEdgesFor(first);
+
+                foreach (var candidate in candidates)
+                {
+                    var curentDistance = candidate.Item2;
+                    if (curentDistance >= maxDistance)
+                    {
+                        break;
+                    }
+                    if (!forView.Contains(candidate.Item1) && canBeViewed(candidate.Item1.Position, rect))
+                    {
+                        try
+                        {
+                            forView.Add(candidate.Item1);
+                            riseCollectionChanged(NotifyCollectionChangedAction.Add, candidate.Item1, forView.Count - 1);
+                        }
+                        catch (Exception e)
+                        {
+                            System.Diagnostics.Debugger.Break();
+                        }
+
+                    }
                 }
             }
         }

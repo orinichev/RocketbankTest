@@ -71,43 +71,7 @@ namespace RocketbankTestApp.ViewModels
 
        public int GetDistanceTo(Models.Atm atm)
        {
-           int result;
-           if (isGeolocationEnabled)
-           {
-
-               const double degreesToRadians = (Math.PI / 180.0);
-               const double earthRadius = 6371; // kilometers
-
-               // convert latitude and longitude values to radians
-               var prevRadLat = atm.Position.Position.Latitude * degreesToRadians;
-               var prevRadLong = atm.Position.Position.Longitude * degreesToRadians;
-               var currRadLat = myLocation.Position.Latitude * degreesToRadians;
-               var currRadLong = myLocation.Position.Longitude * degreesToRadians;
-
-               // calculate radian delta between each position.
-               var radDeltaLat = currRadLat - prevRadLat;
-               var radDeltaLong = currRadLong - prevRadLong;
-
-               // calculate distance
-               var expr1 = (Math.Sin(radDeltaLat / 2.0) *
-                            Math.Sin(radDeltaLat / 2.0)) +
-
-                           (Math.Cos(prevRadLat) *
-                            Math.Cos(currRadLat) *
-                            Math.Sin(radDeltaLong / 2.0) *
-                            Math.Sin(radDeltaLong / 2.0));
-
-               var expr2 = 2.0 * Math.Atan2(Math.Sqrt(expr1),
-                                            Math.Sqrt(1 - expr1));
-
-               var distance = Math.Abs(earthRadius * expr2);
-               result = (int) (distance * 1000);  // return results as meters
-           }
-           else
-           {
-               result = 0;
-           }
-           return result;
+           return isGeolocationEnabled ? 10:0;           
        }
         
         public async Task LoadAtmData()

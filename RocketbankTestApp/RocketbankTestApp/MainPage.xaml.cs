@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -38,7 +39,7 @@ namespace RocketbankTestApp
 
         Image MePin;
         private bool isAdditionalInfoOpened = false;
-            
+
         private ViewModels.MainVM viewModel
         {
             get
@@ -49,21 +50,71 @@ namespace RocketbankTestApp
 
         public MainPage()
         {
-            this.InitializeComponent();          
+            this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
             createMePin();
+            initUI();
+        }
+
+        private void initUI()
+        {
+            Map.Height = Window.Current.Bounds.Height;
+            this.Height = Map.Height + 500;
+        }
+
+        private void open()
+        {
+            Storyboard openStoryBoard = new Storyboard();
+
+            DoubleAnimation timeline = new DoubleAnimation()
+            {
+                To = AdditionalData.RenderSize.Height > 500 ? -500 : -AdditionalData.RenderSize.Height,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new CubicEase()
+            };
+
+            openStoryBoard.Children.Add(timeline);
+
+            Storyboard.SetTarget(timeline, Root);
+            Storyboard.SetTargetProperty(timeline, "(UIElement.RenderTransform).(CompositeTransform.TranslateY)");
+
+            openStoryBoard.Begin();
+
+        }
+
+        private void close()
+        {
+            Storyboard openStoryBoard = new Storyboard();
+
+            DoubleAnimation timeline = new DoubleAnimation()
+            {
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new CubicEase()
+            };
+
+            openStoryBoard.Children.Add(timeline);
+
+            Storyboard.SetTarget(timeline, Root);
+            Storyboard.SetTargetProperty(timeline, "(UIElement.RenderTransform).(CompositeTransform.TranslateY)");
+
+            openStoryBoard.Begin();
         }
 
         void createMePin()
         {
-            
-            
-            MePin = new Image();
-            MePin.Source = new BitmapImage(new Uri("ms-appx:///Assets/pin_me.png"));
-            Binding locationBinding = new Binding();
-            locationBinding.Path = new PropertyPath("MyLocation");
-            locationBinding.Source = viewModel;
+            MePin = new Image()
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Assets/pin_me.png"))
+                };
+
+            Binding locationBinding = new Binding()
+                {
+                    Path = new PropertyPath("MyLocation"),
+                    Source = viewModel
+                };
+
             BindingOperations.SetBinding(MePin, MapControl.LocationProperty, locationBinding);
             Map.Children.Add(MePin);
         }
@@ -76,17 +127,13 @@ namespace RocketbankTestApp
                 return;
             }
             if (isAdditionalInfoOpened)
-                {
-                    closeAdditionalInfo();
-                    e.Handled = true;
-                }
+            {
+                closeAdditionalInfo();
+                e.Handled = true;
+            }
             else if (frame.CanGoBack)
             {
-                
-         
-                    frame.GoBack();
-                
-                
+                frame.GoBack();
                 e.Handled = true;
             }
         }
@@ -95,10 +142,7 @@ namespace RocketbankTestApp
 
         private string getMeasure(int meters)
         {
-            string result = "м";
-            if (meters / 1000 > 1)
-                result = "км";
-            return result;
+            return meters / 1000 > 1 ? "км" : "м";  
         }
 
         private int getDistance(int originalDistance)
@@ -112,15 +156,23 @@ namespace RocketbankTestApp
 
         private void openAdditionalInfo(Models.Atm atm)
         {
-            VisualStateManager.GoToState(this, "Opened", true);
+            //close old data
+            IcImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            IcText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            RocketPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            DataScroller.VerticalScrollMode = ScrollMode.Enabled;
+            ORCPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ICBImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
             isAdditionalInfoOpened = true;
+            //open new
             if (viewModel.IsGeolocationEnabled)
             {
                 var distance = viewModel.GetDistanceTo(atm);
                 DistanceBlock.Text = getDistance(distance).ToString();
-                DistanceMeterBlock.Text = getMeasure(distance).ToString() ;
+                DistanceMeterBlock.Text = getMeasure(distance).ToString();
             }
-            
+
             if (atm.Type == Models.Atm.IC)
             {
                 DataScroller.VerticalScrollMode = ScrollMode.Disabled;
@@ -139,19 +191,15 @@ namespace RocketbankTestApp
             {
                 ICBImage.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
+            Root.UpdateLayout();
+            AdditionalData.UpdateLayout();
+            open();
         }
 
         private void closeAdditionalInfo()
         {
-            
-            VisualStateManager.GoToState(this, "Closed", true);
+            close();
             isAdditionalInfoOpened = false;
-            IcImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            IcText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            RocketPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            DataScroller.VerticalScrollMode = ScrollMode.Enabled;
-            ORCPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            ICBImage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         /// <summary>
@@ -164,7 +212,6 @@ namespace RocketbankTestApp
             closeAdditionalInfo();
             if (e.NavigationMode == NavigationMode.New)
             {
-
                 await viewModel.LoadAtmData();
                 await viewModel.initGeolocation();
                 if (viewModel.IsGeolocationEnabled)
@@ -172,7 +219,6 @@ namespace RocketbankTestApp
                     System.Diagnostics.Debug.WriteLine("Geolocation is enabled");
                     goToMe();
                     setUIToLocatedMode();
-                   
                 }
                 else
                 {
@@ -183,16 +229,7 @@ namespace RocketbankTestApp
                 }
             }
             viewModel.GeolocationStateChanged += viewModel_GeolocationStateChanged;
-            ProgressPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-        
-            // TODO: Prepare page for display here.
-            
-            // TODO: If your application contains multiple pages, ensure that you are
-            // handling the hardware Back button by registering for the
-            // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
-            // If you are using the NavigationHelper provided by some templates,
-            // this event is handled for you.
-           
+            ProgressPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;       
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -232,32 +269,29 @@ namespace RocketbankTestApp
                     await Launcher.LaunchUriAsync(new Uri("ms-settings-location:///"));
                 }
             });
-            await notificationDialog.ShowAsync();            
-        }     
+            await notificationDialog.ShowAsync();
+        }
 
         private void setUIToUnlocatedMode()
         {
             MePin.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             MeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-         
+
         }
 
         private void setUIToLocatedMode()
         {
-            
             MePin.Visibility = Windows.UI.Xaml.Visibility.Visible;
             MeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
-               
 
         private void goToMe()
         {
             try
             {
-                 
-                 Map.ZoomLevel = 15;
-                 Map.Center = viewModel.MyLocation;
-            }    
+                Map.ZoomLevel = 15;
+                Map.Center = viewModel.MyLocation;
+            }
             catch
             {
 
@@ -268,15 +302,12 @@ namespace RocketbankTestApp
         {
             BasicGeoposition geoPosition = new BasicGeoposition()
             {
-
                 Latitude = MOSCOW_LATITUDE,
                 Longitude = MOSCOW_LONGITUDE,
             };
             Map.ZoomLevel = MOSCOW_ZOOM_LEVEL;
             Map.Center = new Geopoint(geoPosition);
         }
-
-
 
         private void MeBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -286,9 +317,8 @@ namespace RocketbankTestApp
 
         private void ZoomInBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (Map.ZoomLevel!=20)
+            if (Map.ZoomLevel != 20)
             {
-               
                 Map.ZoomLevel++;
             }
             e.Handled = true;
@@ -296,8 +326,8 @@ namespace RocketbankTestApp
 
         private void ZoomOutBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (Map.ZoomLevel!=1)
-            {              
+            if (Map.ZoomLevel != 1)
+            {
                 Map.ZoomLevel--;
             }
             e.Handled = true;

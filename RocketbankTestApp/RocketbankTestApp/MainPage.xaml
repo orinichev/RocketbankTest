@@ -17,67 +17,15 @@
     </Page.Resources>
 
 
-    <Grid VerticalAlignment="Stretch">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="DetailedInfoStates">
-                <VisualStateGroup.Transitions>
-                    <VisualTransition From="Closed" GeneratedDuration="0" To="Opened">
-                        <VisualTransition.GeneratedEasingFunction>
-                            <CircleEase EasingMode="EaseIn"/>
-                        </VisualTransition.GeneratedEasingFunction>
-                        <Storyboard>
-                            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="350"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualTransition>
-                    <VisualTransition From="Opened" GeneratedDuration="0" To="Closed">
-                        <VisualTransition.GeneratedEasingFunction>
-                            <CircleEase EasingMode="EaseIn"/>
-                        </VisualTransition.GeneratedEasingFunction>
-                        <Storyboard>
-                            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="350"/>
-                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualTransition>
-                </VisualStateGroup.Transitions>
-                <VisualState x:Name="Closed">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <x:Double>0</x:Double>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="AdditionalData">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <x:Double>0</x:Double>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Opened">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.MinHeight)" Storyboard.TargetName="AdditionalData">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <x:Double>350</x:Double>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+    <Grid VerticalAlignment="Stretch"
+          x:Name="Root">
+        <Grid.RenderTransform>
+            <CompositeTransform/>
+        </Grid.RenderTransform>
+     
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -88,29 +36,32 @@
         <Grid HorizontalAlignment="Stretch"
                 Grid.Row="0"
               DataContext="{StaticResource MainVM}">
+          
             <Maps:MapControl HorizontalAlignment="Stretch"
                              ZoomLevel="15"
                              MapTapped="Map_MapTapped"
-                        
-                           
-                         x:Name="Map">
+                             x:Name="Map">
+                <Maps:MapControl.Transitions>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition/>
+                    </TransitionCollection>
+                </Maps:MapControl.Transitions>
 
                 <Maps:MapItemsControl>
+                    
                     <Maps:MapItemsControl.ItemsSource>
                         <views:MapCollectionView MapControl="{Binding ElementName=Map}"
                                                  CollectionSource="{Binding AtmData}"/>
                     </Maps:MapItemsControl.ItemsSource>
 
-
                     <Maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Image
-                                
-                                Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
-                           Maps:MapControl.Location="{Binding Position}"
-                                   Maps:MapControl.NormalizedAnchorPoint="1,0"
+                            <Image Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
+                                   
+                                   Maps:MapControl.Location="{Binding Position}"                                   
                                    Height="64"
                                    Width="48"
+                                   Margin="0,-64,0,0"
                                    Tapped="ATM_Tapped"
                            />
 
@@ -155,8 +106,7 @@
               VerticalAlignment="Bottom"
                
               MaxHeight="450"
-              MinHeight="0"
-        Height="Auto"
+        
 			Grid.Row="1">
             <ScrollViewer x:Name="DataScroller"
                            >

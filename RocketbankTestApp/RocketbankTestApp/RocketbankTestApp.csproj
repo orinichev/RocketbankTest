@@ -96,6 +96,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Atm.cs" />
+    <Compile Include="Models\GeoExtensions.cs" />
+    <Compile Include="Models\VirtualGeoGraph.cs" />
     <Compile Include="Models\WebResponce.cs" />
     <Compile Include="ObservableCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,7 +108,6 @@
     <Compile Include="Views\DepencencyObject.cs" />
     <Compile Include="Models\IGeoItem.cs" />
     <Compile Include="Views\MapCollectionView.cs" />
-    <Compile Include="Views\MapViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

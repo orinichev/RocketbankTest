@@ -36,5 +36,14 @@ namespace RocketbankTestApp.Models
                    select t;
         }
 
+        public IEnumerable<IGeoItem> GetNeiboursInRadius(IGeoItem node, double radius)
+        {
+            return from n in nodes
+                   let t = new Tuple<IGeoItem, double>(n, n.Position.GetDistance(node.Position))
+                   where (n != node) && t.Item2 <= radius
+                   orderby t.Item2
+                   select t.Item1;
+        }
+
     }
 }

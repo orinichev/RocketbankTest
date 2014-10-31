@@ -14,6 +14,29 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <vm:MainVM x:Key="MainVM"/>
+        <DataTemplate x:Key="MapItemTemplate">
+            <Image Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
+                                   
+                                   Maps:MapControl.Location="{Binding Position}"                                   
+                                   Height="64"
+                                   Width="48"
+                                   Margin="0,-64,0,0"
+                                   Tapped="ATM_Tapped"
+                           />
+        </DataTemplate>
+        <DataTemplate x:Key="ClusterTemplate">
+            <Grid Height="30"
+                  Width="30">
+                <Ellipse HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         Fill="White"
+                         StrokeThickness="10"
+                         Stroke="Red"/>
+                <TextBlock Foreground="Black"
+                           FontSize="14"
+                           Text="{Binding Count}"/>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
 
@@ -56,14 +79,10 @@
 
                     <Maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
-                                   
-                                   Maps:MapControl.Location="{Binding Position}"                                   
-                                   Height="64"
-                                   Width="48"
-                                   Margin="0,-64,0,0"
-                                   Tapped="ATM_Tapped"
-                           />
+                            <views:ClusterTemplateSelector 
+                                Content="{Binding}"
+                                ClusterTemplate="{StaticResource ClusterTemplate}"
+                                                         ItemTemplate="{StaticResource MapItemTemplate}"/>
 
                         </DataTemplate>
                     </Maps:MapItemsControl.ItemTemplate>

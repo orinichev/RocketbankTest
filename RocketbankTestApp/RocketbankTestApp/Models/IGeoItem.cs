@@ -9,6 +9,8 @@ namespace RocketbankTestApp.Models
 {
     public interface IGeoItem
     {
+        bool CanBeClusterized { get; }
+
         Geopoint Position { get; set; }
     }
 }

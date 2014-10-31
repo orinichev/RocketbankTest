@@ -5,6 +5,13 @@ namespace RocketbankTestApp.Models
 {
     public static class GeoExtensions
     {
+        public static bool Contains(this GeoboundingBox _this, Geopoint point)
+        {
+            bool longInside = point.Position.Longitude > _this.NorthwestCorner.Longitude && point.Position.Longitude < _this.SoutheastCorner.Longitude;
+            bool latInside = point.Position.Latitude > _this.SoutheastCorner.Latitude && point.Position.Latitude < _this.NorthwestCorner.Latitude;
+            return longInside && latInside;
+        }
+
         /// <summary>
         /// return distance in meters
         /// </summary>

@@ -96,6 +96,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Atm.cs" />
+    <Compile Include="Models\Cluster.cs" />
     <Compile Include="Models\GeoExtensions.cs" />
     <Compile Include="Models\VirtualGeoGraph.cs" />
     <Compile Include="Models\WebResponce.cs" />
@@ -104,6 +105,8 @@
     <Compile Include="ViewModels\ATMDataVM.cs" />
     <Compile Include="ViewModels\BaseVM.cs" />
     <Compile Include="ViewModels\MainVM.cs" />
+    <Compile Include="Views\ClusterTemplateSelector.cs" />
+    <Compile Include="Views\TemplateSepector.cs" />
     <Compile Include="Views\Converter.cs" />
     <Compile Include="Views\DepencencyObject.cs" />
     <Compile Include="Models\IGeoItem.cs" />

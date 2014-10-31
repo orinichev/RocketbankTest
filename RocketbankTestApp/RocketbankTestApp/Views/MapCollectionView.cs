@@ -1,5 +1,6 @@
 ﻿using RocketbankTestApp.Models;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -14,6 +15,9 @@ namespace RocketbankTestApp.Views
 {
     public class MapCollectionView : DependencyObject, IList, INotifyCollectionChanged
     {
+
+        #region Nested classes
+
         private class simpleGeoItem : IGeoItem
         {
 
@@ -28,6 +32,10 @@ namespace RocketbankTestApp.Views
                 get { return false; }
             }
         }
+
+        #endregion
+
+        const double MIN_VISUAL_DISTANCE = 20;
 
         VirtualGeoGraph pointGraph;
         private IList<IGeoItem> forView = new List<IGeoItem>();
@@ -164,19 +172,45 @@ namespace RocketbankTestApp.Views
 
             double radius = first.Position.GetDistance(new Geopoint(visibleArea.NorthwestCorner));
 
-            var candidates = pointGraph.GetNeiboursInRadius(first, radius);
+            var candidates = from item in pointGraph.GetNeiboursInRadius(first, radius)
+                             where !forView.Contains(item) && visibleArea.Contains(item.Position)
+                             select item;
+           
+
 
             foreach (var candidate in candidates)
             {
-                if (!forView.Contains(candidate) && visibleArea.Contains(candidate.Position))
-                {
                     forView.Add(candidate);
                     riseCollectionChanged(NotifyCollectionChangedAction.Add, candidate, forView.Count - 1);
-                }
+
             }
 
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("Execution time " + watch.ElapsedMilliseconds);
+        }
+
+        private IEnumerable<IGeoItem> clusterize(IEnumerable<IGeoItem> candidates, GeoboundingBox curentView)
+        {
+            Geopoint testGeoPoint;
+            MapControl.GetLocationFromOffset
+                ( new Point(0, MIN_VISUAL_DISTANCE)
+                , out testGeoPoint);
+            double distance = new Geopoint(new BasicGeoposition()
+            {
+                Latitude = curentView.NorthwestCorner.Latitude,
+                Longitude = curentView.NorthwestCorner.Longitude
+            }).GetDistance(testGeoPoint);
+
+            VirtualGeoGraph geoGraph = new VirtualGeoGraph(candidates);
+            bool clusterCreated;
+            do
+            {
+                clusterCreated = false;
+
+            }
+            while (clusterCreated);
+
+            return geoGraph.Nodes;
         }
 
 

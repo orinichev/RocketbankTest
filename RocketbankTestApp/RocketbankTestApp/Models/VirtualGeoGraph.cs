@@ -10,9 +10,26 @@ namespace RocketbankTestApp.Models
     {
         private List<IGeoItem> nodes;
 
+        public List<IGeoItem> Nodes
+        {
+            get { return nodes; }
+            set { nodes = value; }
+        }
+
         public VirtualGeoGraph(IEnumerable<IGeoItem> items)
         {
             nodes = new List<IGeoItem>(items);
+        }
+
+        public void Merge(params IGeoItem[] nodes)
+        {
+            Cluster cluster = new Cluster();
+            foreach (var node in nodes)
+            {
+                cluster.Merge(node);
+                this.nodes.Remove(node);
+            }
+            this.nodes.Add(cluster);
         }
 
         public double this[IGeoItem node1, IGeoItem node2]
@@ -20,11 +37,7 @@ namespace RocketbankTestApp.Models
             get
             {
                 return node1.Position.GetDistance(node2.Position);
-            }
-            set
-            {
-
-            }
+            }          
         }
 
         public IEnumerable<Tuple<IGeoItem, double>> GetEdgesFor(IGeoItem node)

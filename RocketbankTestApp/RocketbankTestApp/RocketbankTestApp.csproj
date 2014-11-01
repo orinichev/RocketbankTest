@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="Models\Atm.cs" />
     <Compile Include="Models\Cluster.cs" />
+    <Compile Include="Models\ClusterizedList.cs" />
     <Compile Include="Models\GeoExtensions.cs" />
     <Compile Include="Models\VirtualGeoGraph.cs" />
     <Compile Include="Models\WebResponce.cs" />

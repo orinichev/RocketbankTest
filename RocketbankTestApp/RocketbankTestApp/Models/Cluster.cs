@@ -59,10 +59,11 @@ namespace RocketbankTestApp.Models
 
         public void Merge(IGeoItem item)
         {
-            Count = item is Cluster ? Count + (item as Cluster).Count : Count + 1;
+            
             Items.Add(item);
-            Position = Count == 1 ? item.Position : calculateCenter(item);
-            Radius = Count == 1 ? 0 : calculateRadius();
+            Position = Items.Count == 1 ? item.Position : calculateCenter(item);
+            Radius = Items.Count == 1 ? 0 : calculateRadius();
+            Count = item is Cluster ? Count + (item as Cluster).Count : Count + 1;
         }
 
         private double calculateRadius()
@@ -82,6 +83,27 @@ namespace RocketbankTestApp.Models
                 Latitude = (this.Position.Position.Latitude + newItem.Position.Position.Latitude) / 2
             });
         }
+
+        public bool Contains(IGeoItem itemToFind)
+        {
+            bool result = false; 
+            foreach (var item in Items)
+            {
+                if (item is Cluster)
+                {
+                    result = (item as Cluster).Contains(itemToFind);
+                }
+                else
+                {
+                    result = item == itemToFind;
+                }
+                if (result) break;
+                
+            }
+            return result;
+        }
+
+
 
         private void risePropertyChanged([CallerMemberName] string propertyName = "")
         {

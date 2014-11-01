@@ -35,10 +35,10 @@ namespace RocketbankTestApp.Views
 
         #endregion
 
-        const double MIN_VISUAL_DISTANCE = 20;
+        const double MIN_VISUAL_DISTANCE = 30;
 
         VirtualGeoGraph pointGraph;
-        private IList<IGeoItem> forView = new List<IGeoItem>();
+        private ClusterizedList forView = new ClusterizedList();
 
         int waitCounter = 0;
         const int Delay = 30;
@@ -173,17 +173,13 @@ namespace RocketbankTestApp.Views
             double radius = first.Position.GetDistance(new Geopoint(visibleArea.NorthwestCorner));
 
             var candidates = from item in pointGraph.GetNeiboursInRadius(first, radius)
-                             where !forView.Contains(item) && visibleArea.Contains(item.Position)
+                             where visibleArea.Contains(item.Position)
                              select item;
-           
 
-
-            foreach (var candidate in candidates)
-            {
-                    forView.Add(candidate);
-                    riseCollectionChanged(NotifyCollectionChangedAction.Add, candidate, forView.Count - 1);
-
-            }
+            var withClusters = clusterize(candidates, visibleArea);
+            forView.Clear();
+            forView = new ClusterizedList(withClusters);
+            riseCollectionChanged(NotifyCollectionChangedAction.Reset);         
 
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("Execution time " + watch.ElapsedMilliseconds);
@@ -195,6 +191,7 @@ namespace RocketbankTestApp.Views
             MapControl.GetLocationFromOffset
                 ( new Point(0, MIN_VISUAL_DISTANCE)
                 , out testGeoPoint);
+
             double distance = new Geopoint(new BasicGeoposition()
             {
                 Latitude = curentView.NorthwestCorner.Latitude,
@@ -202,11 +199,25 @@ namespace RocketbankTestApp.Views
             }).GetDistance(testGeoPoint);
 
             VirtualGeoGraph geoGraph = new VirtualGeoGraph(candidates);
+
             bool clusterCreated;
             do
             {
                 clusterCreated = false;
-
+                for (int i = 0; i < geoGraph.Nodes.Count; i++)
+                {
+                    var curentItem = geoGraph.Nodes[i];
+                    var neibours = from n in geoGraph.GetNeiboursInRadius(curentItem, distance)
+                                   where n.CanBeClusterized
+                                   select n;
+                    var neiboudsList = neibours.ToList();
+                    neiboudsList.Add(curentItem);
+                    if (neibours.Count() != 0)
+                    {
+                        geoGraph.Merge(neiboudsList.ToArray());
+                        clusterCreated = true;
+                    }
+                }
             }
             while (clusterCreated);
 

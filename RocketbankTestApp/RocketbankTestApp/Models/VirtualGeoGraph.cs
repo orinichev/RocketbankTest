@@ -23,6 +23,7 @@ namespace RocketbankTestApp.Models
 
         public void Merge(params IGeoItem[] nodes)
         {
+            
             Cluster cluster = new Cluster();
             foreach (var node in nodes)
             {
@@ -30,6 +31,7 @@ namespace RocketbankTestApp.Models
                 this.nodes.Remove(node);
             }
             this.nodes.Add(cluster);
+            
         }
 
         public double this[IGeoItem node1, IGeoItem node2]

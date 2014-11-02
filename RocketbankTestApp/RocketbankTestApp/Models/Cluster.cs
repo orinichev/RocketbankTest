@@ -103,6 +103,48 @@ namespace RocketbankTestApp.Models
             return result;
         }
 
+        public IEnumerable<IGeoItem> DecomposeForDistance(double distance)
+        {
+            List<IGeoItem> result = new List<IGeoItem>();
+            if (Radius>distance/2)
+            {
+                List<IGeoItem> clusterDecomposition = new List<IGeoItem>();
+                //open clusters
+                var clusters = from item in Items
+                               where item is Cluster
+                               select item as Cluster;
+                foreach (var cluster in clusters)
+                {
+                    clusterDecomposition.AddRange(cluster.DecomposeForDistance(distance));
+                }
+
+                var notClusters = from item in Items
+                                  where !(item is Cluster)
+                                  select item;
+
+                var forWork = notClusters.Union(clusterDecomposition);
+
+                var itemsToDecompose = from item in forWork
+                                  let d = item.Position.GetDistance(this.Position)
+                                  where d <= distance / 2
+                                  select item;
+                var toClusterizeBack = forWork.Except(itemsToDecompose);
+                Cluster resultCluster = new Cluster();
+                foreach (var item in toClusterizeBack)
+                {
+                    resultCluster.Merge(item);
+                }
+
+                result.Add(resultCluster);
+                result.AddRange(itemsToDecompose);
+            }
+            else
+            {
+                result.Add(this);
+            }
+            return result;
+        }
+
 
 
         private void risePropertyChanged([CallerMemberName] string propertyName = "")

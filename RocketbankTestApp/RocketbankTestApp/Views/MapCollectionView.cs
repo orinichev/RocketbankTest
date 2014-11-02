@@ -56,7 +56,7 @@ namespace RocketbankTestApp.Views
                     {
                         _this.generateGraph(e.NewValue as IList<IGeoItem>);
                         if (_this.MapControl != null)
-                            _this.addNew();
+                            _this.addPointsToMap();
                     }
                 })
             );
@@ -81,7 +81,7 @@ namespace RocketbankTestApp.Views
                         newMap.CenterChanged += _this.mapControl_Changed;
                         newMap.ZoomLevelChanged += _this.mapControl_Changed;
 
-                        _this.addNew();
+                        _this.addPointsToMap();
                     }
                 })
             );
@@ -134,15 +134,56 @@ namespace RocketbankTestApp.Views
             }
             while (waitCounter != 0);
             running = false;
-            removeUnvisible();
-            addNew();
+
+            addPointsToMap();
         }
 
+        private void addPointsToMap()
+        {
+            //get visible area
+            var visibleArea = getVisibleRect();
+            //get distance for cluster
+            Geopoint testGeoPoint;
+            MapControl.GetLocationFromOffset
+               (new Point(0, MIN_VISUAL_DISTANCE)
+               , out testGeoPoint);
+            double distance = new Geopoint(new BasicGeoposition()
+            {
+                Latitude = visibleArea.NorthwestCorner.Latitude,
+                Longitude = visibleArea.NorthwestCorner.Longitude
+            }).GetDistance(testGeoPoint);
 
-        private void removeUnvisible()
+            removeUnvisible(visibleArea);
+            addNew(visibleArea, distance);
+        }
+
+        
+        private void Decompose(double distance)
+        {
+            var clusters = from item in forView
+                           where item is Cluster
+                           select item as Cluster;
+            foreach (var cluster  in clusters)
+            {
+                var clusterDecompositon = cluster.DecomposeForDistance(distance);
+                if (clusterDecompositon.Count() != 1)
+                {
+                    var index = forView.IndexOf(cluster);
+                    forView.Remove(cluster);
+                    riseCollectionChanged(NotifyCollectionChangedAction.Remove, cluster, index);
+                    foreach (var item in clusterDecompositon)
+                    {
+                        forView.Add(item);
+                        riseCollectionChanged(NotifyCollectionChangedAction.Add, item, forView.Count - 1);
+                    }
+                }
+            }
+        }
+
+        private void removeUnvisible(GeoboundingBox rect)
         {
             HashSet<IGeoItem> toRemove = new HashSet<IGeoItem>();
-            var rect = getVisibleRect();
+            
             foreach (var point in forView)
             {
                 if (!canBeViewed(point.Position, rect))
@@ -158,12 +199,12 @@ namespace RocketbankTestApp.Views
             }
         }
 
-        private void addNew()
+        private void addNew(GeoboundingBox visibleArea, double distance)
         {
             if (CollectionSource == null) return;
             var watch = Stopwatch.StartNew();
 
-            var visibleArea = getVisibleRect();
+           
             IGeoItem first = new simpleGeoItem()
             {
                 Position = new Geopoint(visibleArea.Center)
@@ -173,31 +214,27 @@ namespace RocketbankTestApp.Views
             double radius = first.Position.GetDistance(new Geopoint(visibleArea.NorthwestCorner));
 
             var candidates = from item in pointGraph.GetNeiboursInRadius(first, radius)
-                             where visibleArea.Contains(item.Position)
-                             select item;
+                             where !forView.Contains(item) && visibleArea.Contains(item.Position)
+                             select item;         
 
-            var withClusters = clusterize(candidates, visibleArea);
-            forView.Clear();
-            forView = new ClusterizedList(withClusters);
-            riseCollectionChanged(NotifyCollectionChangedAction.Reset);         
+            var withClusters = clusterize(candidates, visibleArea, distance);
+        
+            foreach (var item in withClusters)
+            {
+                forView.Add(item);
+                riseCollectionChanged(NotifyCollectionChangedAction.Add, item, forView.Count-1);         
+            }
+          
 
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("Execution time " + watch.ElapsedMilliseconds);
         }
 
-        private IEnumerable<IGeoItem> clusterize(IEnumerable<IGeoItem> candidates, GeoboundingBox curentView)
+        private IEnumerable<IGeoItem> clusterize
+            ( IEnumerable<IGeoItem> candidates
+            , GeoboundingBox curentView
+            , double distance)
         {
-            Geopoint testGeoPoint;
-            MapControl.GetLocationFromOffset
-                ( new Point(0, MIN_VISUAL_DISTANCE)
-                , out testGeoPoint);
-
-            double distance = new Geopoint(new BasicGeoposition()
-            {
-                Latitude = curentView.NorthwestCorner.Latitude,
-                Longitude = curentView.NorthwestCorner.Longitude
-            }).GetDistance(testGeoPoint);
-
             VirtualGeoGraph geoGraph = new VirtualGeoGraph(candidates);
 
             bool clusterCreated;

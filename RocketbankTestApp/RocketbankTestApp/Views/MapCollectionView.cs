@@ -154,11 +154,12 @@ namespace RocketbankTestApp.Views
             }).GetDistance(testGeoPoint);
 
             removeUnvisible(visibleArea);
+            decompose(distance);
             addNew(visibleArea, distance);
         }
 
         
-        private void Decompose(double distance)
+        private void decompose(double distance)
         {
             var clusters = from item in forView
                            where item is Cluster
@@ -215,17 +216,15 @@ namespace RocketbankTestApp.Views
 
             var candidates = from item in pointGraph.GetNeiboursInRadius(first, radius)
                              where !forView.Contains(item) && visibleArea.Contains(item.Position)
-                             select item;         
+                             select item;
+            candidates = candidates.Union(forView);
 
             var withClusters = clusterize(candidates, visibleArea, distance);
-        
-            foreach (var item in withClusters)
-            {
-                forView.Add(item);
-                riseCollectionChanged(NotifyCollectionChangedAction.Add, item, forView.Count-1);         
-            }
-          
 
+            forView = new ClusterizedList(withClusters);
+
+
+            riseCollectionChanged(NotifyCollectionChangedAction.Reset);
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("Execution time " + watch.ElapsedMilliseconds);
         }

@@ -62,7 +62,7 @@ namespace RocketbankTestApp.Models
             var clusterList = from geoItem in wrappedList
                               where geoItem is Cluster && (geoItem as Cluster).Contains(item)
                               select geoItem;
-            var clusterContains = clusterList.DefaultIfEmpty() != null;
+            var clusterContains = clusterList.Count() != 0;
             return clusterContains || simpleContains;
         }
 

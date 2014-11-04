@@ -7,7 +7,7 @@ using Windows.Devices.Geolocation;
 
 namespace RocketbankTestApp.Models
 {
-    public class VirtualGeoGraph : RocketbankTestApp.Models.IVirtualGeoGraph
+    public class VirtualGeoGraph
     {
         private List<IGeoItem> nodes;
 
@@ -37,33 +37,21 @@ namespace RocketbankTestApp.Models
             return VirtualGraphView.Create(this, box, distance);
         }
 
-        public void Merge(double distance, params IGeoItem[] nodes)
+        public Cluster Merge(double distance, params IGeoItem[] nodes)
         {            
             Cluster cluster = new Cluster();
             foreach (var node in nodes)
             {
                 cluster.Merge(node, distance);
-                this.nodes.Remove(node);
+                this.Nodes.Remove(node);
             }
-            this.nodes.Add(cluster);            
+            this.nodes.Add(cluster);
+            return cluster;
         }
 
         public void DecomposeClusters(Geopoint center, double radius, double distance)
         {
-            //var localClustersTodecompose = from node in nodes
-            //                               let d = center.GetDistance(node.Position)
-            //                               where node is Cluster 
-            //                               && d < radius
-            //                               && (node as Cluster).Radius * 2 < distance
-            //                               select node as Cluster;
-            //foreach (var item in localClustersTodecompose)
-            //{
-            //    nodes.Remove(item);
-            //}
-            //foreach (var item in localClustersTodecompose)
-            //{
-            //    nodes.AddRange(item.Items.Keys);
-            //}
+           
         }
        
 
@@ -88,7 +76,7 @@ namespace RocketbankTestApp.Models
         {
             return from n in nodes
                    let t = new Tuple<IGeoItem, double>(n, node.Position.GetDistance(n.Position))
-                   where (t.Item1 != node) && t.Item2 <= radius
+                   where (t.Item1 != node) && t.Item2 < radius
                    orderby t.Item2
                    select t.Item1;
         }

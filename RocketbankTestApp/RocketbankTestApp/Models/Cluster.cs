@@ -61,10 +61,13 @@ namespace RocketbankTestApp.Models
 
         public void Merge(IGeoItem item, double distance)
         {
+
             Items.Add(item, distance);
             Position = Items.Count == 1 ? item.Position : calculateCenter(item);
             Radius = Items.Count == 1 ? 0 : calculateRadius();
             Count = item is Cluster ? Count + (item as Cluster).Count : Count + 1;
+
+
         }
 
         private double calculateRadius()
@@ -73,15 +76,17 @@ namespace RocketbankTestApp.Models
                             let d = item.Key.Position.GetDistance(Position)
                             orderby d
                             select d;
-            return distances.Count() == 0 ? 0 : distances.First();
+            return distances.Count() == 0 ? 0 : distances.Last();
         }
 
         private Windows.Devices.Geolocation.Geopoint calculateCenter(IGeoItem newItem)
         {
+            var countB = newItem is Cluster ? (newItem as Cluster).count : 1;
+            var total = this.Count + countB;
             return new Geopoint(new BasicGeoposition()
             {
-                Longitude = (this.Position.Position.Longitude + newItem.Position.Position.Longitude) / 2,
-                Latitude = (this.Position.Position.Latitude + newItem.Position.Position.Latitude) / 2
+                Longitude = (this.Position.Position.Longitude * this.Count + newItem.Position.Position.Longitude * countB) / total,
+                Latitude = (this.Position.Position.Latitude * this.Count + newItem.Position.Position.Latitude * countB) / total,
             });
         }
 
@@ -99,39 +104,45 @@ namespace RocketbankTestApp.Models
                     result = item == itemToFind;
                 }
                 if (result) break;
-
             }
             return result;
         }
 
         private void regrateCenter(IGeoItem item)
         {
-            this.Position = new Geopoint(new BasicGeoposition()
-            {
-                Latitude = 2 * Position.Position.Latitude - item.Position.Position.Latitude,
-                Longitude = 2 * Position.Position.Longitude - item.Position.Position.Longitude,
-            });
+            var removedCount = item is Cluster ? (item as Cluster).count : 1;
+            if (removedCount != count)
+                this.Position = new Geopoint(new BasicGeoposition()
+                {
+                    Longitude = (this.Position.Position.Longitude * this.Count - item.Position.Position.Longitude * removedCount) / (this.Count - removedCount),
+                    Latitude = (this.Position.Position.Latitude * this.Count - item.Position.Position.Latitude * removedCount) / (this.Count - removedCount),
+                });
         }
 
         public IEnumerable<IGeoItem> DecomposeForDistance(double distance)
         {
             List<IGeoItem> result = new List<IGeoItem>();
 
-            var query = from pair in Items
-                        where pair.Value > distance
-                        select pair.Key;
-            foreach (var item in query.ToList())
+            var innerClusters = from pair in Items
+                                where pair.Key is Cluster
+                                select pair;
+
+            var query = (from pair in Items
+                         where pair.Value >= distance
+                         select pair.Key).ToList();
+            foreach (var item in query)
             {
-                regrateCenter(item);
                 Items.Remove(item);
-                Count = item is Cluster ? Count - (item as Cluster).count:Count-1;
+                regrateCenter(item);
+                Count = item is Cluster ? Count - (item as Cluster).count : Count - 1;
                 result.Add(item);
             }
-            if (result.Count>0)
+
+            if (result.Count > 0)
             {
-                calculateRadius();   
+                calculateRadius();
             }
-                 
+
 
             return result;
         }

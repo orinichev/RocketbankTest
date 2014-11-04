@@ -12,6 +12,12 @@ namespace RocketbankTestApp.Models
             return longInside && latInside;
         }
 
+        public static bool intersectWithArea(this GeoboundingBox area, Cluster cluster)
+        {
+            var boxR = new Geopoint(area.Center).GetDistance(new Geopoint(area.NorthwestCorner));
+            return cluster.Position.GetDistance(new Geopoint(area.Center)) < cluster.Radius + boxR;
+        }
+
         /// <summary>
         /// return distance in meters
         /// </summary>

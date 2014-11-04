@@ -36,12 +36,13 @@ namespace RocketbankTestApp.Views
         #endregion
 
         const double MIN_VISUAL_DISTANCE = 30;
+        const int DELAY = 50;
 
         VirtualGeoGraph pointGraph;
         private ClusterizedList forView = new ClusterizedList();
 
         int waitCounter = 0;
-        const int Delay = 30;
+       
         bool running = false;
 
 
@@ -121,7 +122,7 @@ namespace RocketbankTestApp.Views
 
         async void mapControl_Changed(MapControl sender, object args)
         {
-            waitCounter = Delay;
+            waitCounter = DELAY;
             if (running)
             {
                 return;
@@ -156,7 +157,7 @@ namespace RocketbankTestApp.Views
                 Longitude = visibleArea.NorthwestCorner.Longitude
             }).GetDistance(testGeoPoint);                  
 
-            var graphView = pointGraph.GetView(visibleArea, distance);        
+            var graphView = pointGraph.GetView(visibleArea, distance);
 
             graphView.Decompose();
 
@@ -189,7 +190,16 @@ namespace RocketbankTestApp.Views
             }
             catch
             {
-
+                nordwestConor = new Geopoint(new BasicGeoposition()
+                    {
+                        Latitude = 77.6087,
+                        Longitude = -6.7633
+                    });
+                eastSourthConor = new Geopoint(new BasicGeoposition()
+                    {
+                        Latitude = 27.9378,
+                        Longitude = -167.0589
+                    });
             }
           
         

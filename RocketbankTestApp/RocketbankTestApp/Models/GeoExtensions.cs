@@ -20,6 +20,7 @@ namespace RocketbankTestApp.Models
         /// <returns></returns>
         public static double GetDistance(this Geopoint _this, Geopoint point)
         {
+
             var lat1 = _this.Position.Latitude;
             var lat2 = point.Position.Latitude;
             var lon1 = _this.Position.Longitude;

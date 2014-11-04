@@ -99,7 +99,9 @@
     <Compile Include="Models\Cluster.cs" />
     <Compile Include="Models\ClusterizedList.cs" />
     <Compile Include="Models\GeoExtensions.cs" />
+    <Compile Include="Models\IVirtualGeoGraph.cs" />
     <Compile Include="Models\VirtualGeoGraph.cs" />
+    <Compile Include="Models\VirtualGraphView.cs" />
     <Compile Include="Models\WebResponce.cs" />
     <Compile Include="ObservableCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

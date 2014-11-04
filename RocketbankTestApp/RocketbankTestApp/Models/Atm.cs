@@ -66,7 +66,10 @@ namespace RocketbankTestApp.Models
 
         public bool CanBeClusterized
         {
-            get { return Type == MKB; }
+            get 
+            {
+                
+                return Type == MKB; }
         }
     }
 }

@@ -81,7 +81,7 @@ namespace RocketbankTestApp.Views
                         newMap.CenterChanged += _this.mapControl_Changed;
                         newMap.ZoomLevelChanged += _this.mapControl_Changed;
 
-                        _this.addPointsToMap();
+
                     }
                 })
             );
@@ -140,6 +140,8 @@ namespace RocketbankTestApp.Views
 
         private void addPointsToMap()
         {
+            if (pointGraph.Nodes.Count == 0)
+                return;
             //get visible area
             var visibleArea = getVisibleRect();
             //get distance for cluster
@@ -147,118 +149,24 @@ namespace RocketbankTestApp.Views
             MapControl.GetLocationFromOffset
                (new Point(0, MIN_VISUAL_DISTANCE)
                , out testGeoPoint);
+
             double distance = new Geopoint(new BasicGeoposition()
             {
                 Latitude = visibleArea.NorthwestCorner.Latitude,
                 Longitude = visibleArea.NorthwestCorner.Longitude
-            }).GetDistance(testGeoPoint);
+            }).GetDistance(testGeoPoint);                  
 
-            removeUnvisible(visibleArea);
-            decompose(distance);
-            addNew(visibleArea, distance);
-        }
+            var graphView = pointGraph.GetView(visibleArea, distance);        
 
-        
-        private void decompose(double distance)
-        {
-            var clusters = from item in forView
-                           where item is Cluster
-                           select item as Cluster;
-            foreach (var cluster  in clusters)
-            {
-                var clusterDecompositon = cluster.DecomposeForDistance(distance);
-                if (clusterDecompositon.Count() != 1)
-                {
-                    var index = forView.IndexOf(cluster);
-                    forView.Remove(cluster);
-                    riseCollectionChanged(NotifyCollectionChangedAction.Remove, cluster, index);
-                    foreach (var item in clusterDecompositon)
-                    {
-                        forView.Add(item);
-                        riseCollectionChanged(NotifyCollectionChangedAction.Add, item, forView.Count - 1);
-                    }
-                }
-            }
-        }
+            graphView.Decompose();
 
-        private void removeUnvisible(GeoboundingBox rect)
-        {
-            HashSet<IGeoItem> toRemove = new HashSet<IGeoItem>();
-            
-            foreach (var point in forView)
-            {
-                if (!canBeViewed(point.Position, rect))
-                {
-                    toRemove.Add(point);
-                }
-            }
-            foreach (var item in toRemove)
-            {
-                int index = forView.IndexOf(item);
-                forView.Remove(item);
-                riseCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
-            }
-        }
+            graphView.Clusterize();
 
-        private void addNew(GeoboundingBox visibleArea, double distance)
-        {
-            if (CollectionSource == null) return;
-            var watch = Stopwatch.StartNew();
-
-           
-            IGeoItem first = new simpleGeoItem()
-            {
-                Position = new Geopoint(visibleArea.Center)
-            };
-
-
-            double radius = first.Position.GetDistance(new Geopoint(visibleArea.NorthwestCorner));
-
-            var candidates = from item in pointGraph.GetNeiboursInRadius(first, radius)
-                             where !forView.Contains(item) && visibleArea.Contains(item.Position)
-                             select item;
-            candidates = candidates.Union(forView);
-
-            var withClusters = clusterize(candidates, visibleArea, distance);
-
-            forView = new ClusterizedList(withClusters);
-
-
+            forView = new ClusterizedList(graphView.Nodes);
             riseCollectionChanged(NotifyCollectionChangedAction.Reset);
-            watch.Stop();
-            System.Diagnostics.Debug.WriteLine("Execution time " + watch.ElapsedMilliseconds);
-        }
 
-        private IEnumerable<IGeoItem> clusterize
-            ( IEnumerable<IGeoItem> candidates
-            , GeoboundingBox curentView
-            , double distance)
-        {
-            VirtualGeoGraph geoGraph = new VirtualGeoGraph(candidates);
-
-            bool clusterCreated;
-            do
-            {
-                clusterCreated = false;
-                for (int i = 0; i < geoGraph.Nodes.Count; i++)
-                {
-                    var curentItem = geoGraph.Nodes[i];
-                    var neibours = from n in geoGraph.GetNeiboursInRadius(curentItem, distance)
-                                   where n.CanBeClusterized
-                                   select n;
-                    var neiboudsList = neibours.ToList();
-                    neiboudsList.Add(curentItem);
-                    if (neibours.Count() != 0)
-                    {
-                        geoGraph.Merge(neiboudsList.ToArray());
-                        clusterCreated = true;
-                    }
-                }
-            }
-            while (clusterCreated);
-
-            return geoGraph.Nodes;
-        }
+         
+        }     
 
 
         private bool canBeViewed(Geopoint point, GeoboundingBox rect)
@@ -272,14 +180,21 @@ namespace RocketbankTestApp.Views
 
         private GeoboundingBox getVisibleRect()
         {
-            Geopoint leftTop;
+            Geopoint nordwestConor;
+            Geopoint eastSourthConor;
+            try
+            {
+                MapControl.GetLocationFromOffset(new Point(0, 0), out nordwestConor);
+                MapControl.GetLocationFromOffset(new Point(MapControl.ActualWidth, MapControl.ActualHeight), out eastSourthConor);
+            }
+            catch
+            {
 
-            Geopoint rightBottom;
-            MapControl.GetLocationFromOffset(new Point(0, 0), out leftTop);
+            }
+          
+        
 
-            MapControl.GetLocationFromOffset(new Point(MapControl.ActualWidth, MapControl.ActualHeight), out rightBottom);
-
-            return new GeoboundingBox(leftTop.Position, rightBottom.Position);
+            return new GeoboundingBox(nordwestConor.Position, eastSourthConor.Position);
         }
 
 

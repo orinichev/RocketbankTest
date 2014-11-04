@@ -88,8 +88,6 @@ namespace RocketbankTestApp.ViewModels
                             Longitude = args.Position.Coordinate.Longitude,
                         });
                 });
-
-
         }
 
         async void geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)

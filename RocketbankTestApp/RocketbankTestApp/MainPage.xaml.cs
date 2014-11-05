@@ -242,6 +242,7 @@ namespace RocketbankTestApp
         {
             if (e)
             {
+                goToMe();
                 setUIToLocatedMode();
             }
             else
@@ -315,20 +316,20 @@ namespace RocketbankTestApp
             e.Handled = true;
         }
 
-        private void ZoomInBtn_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ZoomInBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (Map.ZoomLevel != 20)
             {
-                Map.ZoomLevel++;
+                await Map.TrySetViewAsync(Map.Center, Map.ZoomLevel+1);
             }
             e.Handled = true;
         }
 
-        private void ZoomOutBtn_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ZoomOutBtn_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (Map.ZoomLevel != 1)
             {
-                Map.ZoomLevel--;
+                await Map.TrySetViewAsync(Map.Center, Map.ZoomLevel-1);
             }
             e.Handled = true;
         }
@@ -336,7 +337,7 @@ namespace RocketbankTestApp
         private void ATM_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var context = (sender as FrameworkElement).DataContext as Models.Atm;
-            Map.Center = context.Position;
+          //  Map.Center = context.Position;
             AdditionalData.DataContext = context;
             openAdditionalInfo(context);
             e.Handled = true;

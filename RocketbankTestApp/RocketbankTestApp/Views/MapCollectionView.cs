@@ -10,6 +10,8 @@ using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.ApplicationModel.Core;
+using System.Threading;
 
 namespace RocketbankTestApp.Views
 {
@@ -42,7 +44,7 @@ namespace RocketbankTestApp.Views
         private ClusterizedList forView = new ClusterizedList();
 
         int waitCounter = 0;
-       
+
         bool running = false;
 
 
@@ -50,14 +52,19 @@ namespace RocketbankTestApp.Views
             ("CollectionSource"
             , typeof(IList<IGeoItem>)
             , typeof(MapCollectionView)
-            , new PropertyMetadata(null, (d, e) =>
+            , new PropertyMetadata(null, async (d, e) =>
                 {
                     MapCollectionView _this = d as MapCollectionView;
                     if (_this != null)
                     {
                         _this.generateGraph(e.NewValue as IList<IGeoItem>);
                         if (_this.MapControl != null)
-                            _this.addPointsToMap();
+                        {
+                            _this.Cancel();
+                            using (_this.source = new CancellationTokenSource())
+                                await _this.addPointsToMap(_this.source.Token);
+                        }
+
                     }
                 })
             );
@@ -135,39 +142,71 @@ namespace RocketbankTestApp.Views
             }
             while (waitCounter != 0);
             running = false;
-
-            addPointsToMap();
+            source.Cancel();
+            using (source = new CancellationTokenSource())
+                await addPointsToMap(source.Token);
         }
 
-        private void addPointsToMap()
+        CancellationTokenSource source;
+
+        public void Cancel()
+        {
+            try
+            {
+
+                if (source != null)
+                    source.Cancel();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private async Task addPointsToMap(CancellationToken token)
         {
             if (pointGraph.Nodes.Count == 0)
                 return;
-            //get visible area
-            var visibleArea = getVisibleRect();
-            //get distance for cluster
-            Geopoint testGeoPoint;
-            MapControl.GetLocationFromOffset
-               (new Point(0, MIN_VISUAL_DISTANCE)
-               , out testGeoPoint);
-
+            if (token.IsCancellationRequested)
+                return;
+            GeoboundingBox visibleArea = null;
+            Geopoint testGeoPoint = null;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                //get visible area
+                visibleArea = getVisibleRect();
+                //get distance for cluster
+                MapControl.GetLocationFromOffset
+                    (new Point(0, MIN_VISUAL_DISTANCE)
+                    , out testGeoPoint);
+            });
+            if (token.IsCancellationRequested)
+                return;
             double distance = new Geopoint(new BasicGeoposition()
             {
                 Latitude = visibleArea.NorthwestCorner.Latitude,
                 Longitude = visibleArea.NorthwestCorner.Longitude
-            }).GetDistance(testGeoPoint);                  
+            }).GetDistance(testGeoPoint);
 
             var graphView = pointGraph.GetView(visibleArea, distance);
-
+            if (token.IsCancellationRequested)
+                return;
             graphView.Decompose();
-
+            if (token.IsCancellationRequested)
+                return;
             graphView.Clusterize();
-
+            if (token.IsCancellationRequested)
+                return;
             forView = new ClusterizedList(graphView.Nodes);
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+        {
             riseCollectionChanged(NotifyCollectionChangedAction.Reset);
+        });
 
-         
-        }     
+
+
+
+        }
 
 
         private bool canBeViewed(Geopoint point, GeoboundingBox rect)
@@ -201,8 +240,8 @@ namespace RocketbankTestApp.Views
                         Longitude = -167.0589
                     });
             }
-          
-        
+
+
 
             return new GeoboundingBox(nordwestConor.Position, eastSourthConor.Position);
         }

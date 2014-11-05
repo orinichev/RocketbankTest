@@ -69,6 +69,7 @@
           
             <Maps:MapControl HorizontalAlignment="Stretch"
                              ZoomLevel="15"
+                             
                              MapTapped="Map_MapTapped"
                              x:Name="Map">
                 <Maps:MapControl.Transitions>

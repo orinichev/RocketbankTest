@@ -131,11 +131,7 @@ namespace RocketbankTestApp
                 closeAdditionalInfo();
                 e.Handled = true;
             }
-            else if (frame.CanGoBack)
-            {
-                frame.GoBack();
-                e.Handled = true;
-            }
+            
         }
 
 

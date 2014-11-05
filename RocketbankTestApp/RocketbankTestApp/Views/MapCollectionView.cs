@@ -61,7 +61,9 @@ namespace RocketbankTestApp.Views
                         if (_this.MapControl != null)
                         {
                             _this.Cancel();
-                            using (_this.source = new CancellationTokenSource())
+                            if (_this.source!=null)
+                                _this.source.Dispose();
+                            _this.source = new CancellationTokenSource();
                                 await _this.addPointsToMap(_this.source.Token);
                         }
 
@@ -143,7 +145,9 @@ namespace RocketbankTestApp.Views
             while (waitCounter != 0);
             running = false;
             source.Cancel();
-            using (source = new CancellationTokenSource())
+            if (source!=null)
+                source.Dispose();
+            source = new CancellationTokenSource();
                 await addPointsToMap(source.Token);
         }
 

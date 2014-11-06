@@ -18,18 +18,18 @@
             <Image Source="{Binding Type, Converter={StaticResource ATMNameToImageConverter}}"
                                    
                                    Maps:MapControl.Location="{Binding Position}"                                   
-                                   Height="64"
-                                   Width="48"
-                                   Margin="0,-64,0,0"
+                                   Height="56"
+                                   Width="42"
+                                   Margin="0,-48,0,0"
                                    Tapped="ATM_Tapped"
                            />
         </DataTemplate>
         <DataTemplate x:Key="ClusterTemplate">
-            <Grid Height="30"
-                  Width="30"
-                  Margin="-15,-15,0,0"
+            <Grid Height="34"
+                  Width="34"
+                  Margin="-17,-17,0,0"
                    Maps:MapControl.Location="{Binding Position}"  
-                  
+                  Tapped="Grid_Tapped"
                                    >
                 <Ellipse HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
@@ -37,7 +37,9 @@
                          StrokeThickness="3"
                          Stroke="White"/>
                 <TextBlock Foreground="White"
-                           FontSize="14"
+                           FontSize="12"
+                           FontWeight="Bold"
+                           FontStretch="Expanded"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            TextAlignment="Center"
@@ -69,7 +71,7 @@
           
             <Maps:MapControl HorizontalAlignment="Stretch"
                              ZoomLevel="15"
-                             
+                             VerticalAlignment="Bottom"
                              MapTapped="Map_MapTapped"
                              x:Name="Map">
                 <Maps:MapControl.Transitions>
@@ -135,6 +137,9 @@
               MaxHeight="450"
         
 			Grid.Row="1">
+            <Grid.RenderTransform>
+                <CompositeTransform/>
+            </Grid.RenderTransform>
             <ScrollViewer x:Name="DataScroller"
                            >
                 <StackPanel Orientation="Vertical"

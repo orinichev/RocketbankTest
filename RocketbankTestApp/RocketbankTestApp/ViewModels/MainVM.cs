@@ -72,7 +72,7 @@ namespace RocketbankTestApp.ViewModels
                 MyLocation = new Geopoint(geoPosition);
                 IsGeolocationEnabled = true;
             }
-            catch
+            catch (Exception ex)
             {
                 IsGeolocationEnabled = false;
             }

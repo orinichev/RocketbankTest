@@ -11,7 +11,7 @@ namespace RocketbankTestApp.Models
 {
     public class Cluster : IGeoItem, INotifyPropertyChanged
     {
-        private Dictionary<IGeoItem, double> Items { get; set; }
+        public Dictionary<IGeoItem, double> Items { get; set; }
 
 
 

@@ -282,12 +282,12 @@ namespace RocketbankTestApp
             MeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        private void goToMe()
+        private async void goToMe()
         {
             try
             {
-                Map.ZoomLevel = 15;
-                Map.Center = viewModel.MyLocation;
+                await Map.TrySetViewAsync(viewModel.MyLocation, 15);
+            
             }
             catch
             {
@@ -295,15 +295,15 @@ namespace RocketbankTestApp
             }
         }
 
-        private void goToMoscow()
+        private async void goToMoscow()
         {
             BasicGeoposition geoPosition = new BasicGeoposition()
             {
                 Latitude = MOSCOW_LATITUDE,
                 Longitude = MOSCOW_LONGITUDE,
             };
-            Map.ZoomLevel = MOSCOW_ZOOM_LEVEL;
-            Map.Center = new Geopoint(geoPosition);
+            await Map.TrySetViewAsync(new Geopoint(geoPosition), MOSCOW_ZOOM_LEVEL);
+         
         }
 
         private void MeBtn_Tapped(object sender, TappedRoutedEventArgs e)

@@ -37,7 +37,7 @@ namespace RocketbankTestApp.Views
 
         #endregion
 
-        const double MIN_VISUAL_DISTANCE = 30;
+        const double MIN_VISUAL_DISTANCE = 60;
         const int DELAY = 50;
 
         VirtualGeoGraph pointGraph;

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="24006Orinichev.Rocketbank" Publisher="CN=AE570B1D-6F5A-4636-B0BE-5A5C0C5ABA64" Version="1.1.0.0" />
+  <Identity Name="24006Orinichev.Rocketbank" Publisher="CN=AE570B1D-6F5A-4636-B0BE-5A5C0C5ABA64" Version="1.1.0.3" />
   <mp:PhoneIdentity PhoneProductId="e30585da-a15b-481c-addb-4173c93e33a1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Банкоматы Rocketbank</DisplayName>

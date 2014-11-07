@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="e02f668a-a4ef-4487-a6e0-ad16ee604329" Publisher="CN=orini_000" Version="1.0.0.4" />
-  <mp:PhoneIdentity PhoneProductId="e02f668a-a4ef-4487-a6e0-ad16ee604329" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="24006Orinichev.Rocketbank" Publisher="CN=AE570B1D-6F5A-4636-B0BE-5A5C0C5ABA64" Version="1.1.0.0" />
+  <mp:PhoneIdentity PhoneProductId="e30585da-a15b-481c-addb-4173c93e33a1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>RocketbankTestApp</DisplayName>
-    <PublisherDisplayName>orini_000</PublisherDisplayName>
+    <DisplayName>Банкоматы Rocketbank</DisplayName>
+    <PublisherDisplayName>Orinichev</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
@@ -16,10 +16,14 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="RocketbankTestApp.App">
-      <m3:VisualElements DisplayName="RocketbankTestApp" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="RocketbankTestApp" ForegroundText="light" BackgroundColor="transparent">
+      <m3:VisualElements DisplayName="Банкоматы Rocketbank" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="RocketbankTestApp" ForegroundText="light" BackgroundColor="transparent">
+        <m3:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
         <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png">
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" />
+        <m3:InitialRotationPreference>
+          <m3:Rotation Preference="portrait" />
+        </m3:InitialRotationPreference>
       </m3:VisualElements>
     </Application>
   </Applications>

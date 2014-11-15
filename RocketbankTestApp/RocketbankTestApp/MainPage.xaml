@@ -29,7 +29,7 @@
                   Width="34"
                   Margin="-17,-17,0,0"
                    Maps:MapControl.Location="{Binding Position}"  
-                  Tapped="Grid_Tapped"
+                 
                                    >
                 <Ellipse HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"

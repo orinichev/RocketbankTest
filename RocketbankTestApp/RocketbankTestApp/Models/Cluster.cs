@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
 namespace RocketbankTestApp.Models
 {
     public class Cluster : IGeoItem, INotifyPropertyChanged
     {
-        public Dictionary<IGeoItem, double> Items { get; set; }
-
-
+        public Dictionary<IGeoItem, double> Items { get; set; } = new Dictionary<IGeoItem, double>();
 
         private Windows.Devices.Geolocation.Geopoint position;
 
@@ -54,11 +49,6 @@ namespace RocketbankTestApp.Models
             }
         }
 
-        public Cluster()
-        {
-            Items = new Dictionary<IGeoItem, double>();
-        }
-
         public void Merge(IGeoItem item, double distance)
         {
 
@@ -66,8 +56,6 @@ namespace RocketbankTestApp.Models
             Position = Items.Count == 1 ? item.Position : calculateCenter(item);
             Radius = Items.Count == 1 ? 0 : calculateRadius();
             Count = item is Cluster ? Count + (item as Cluster).Count : Count + 1;
-
-
         }
 
         private double calculateRadius()

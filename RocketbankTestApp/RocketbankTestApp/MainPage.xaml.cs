@@ -344,10 +344,5 @@ namespace RocketbankTestApp
         {
             closeAdditionalInfo();
         }
-
-        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-
-        }
     }
 }
